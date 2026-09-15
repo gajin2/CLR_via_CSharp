@@ -1,2 +1,5 @@
 # 本地下载的校验工具(epubcheck, 32MB 二进制)，不入库
 .tools/
+
+# 电子书为构建产物，不入库(可用 build_epub.py 重新生成)
+*.epub
