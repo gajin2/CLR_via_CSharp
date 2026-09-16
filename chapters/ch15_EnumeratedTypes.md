@@ -28,7 +28,7 @@ internal enum Color {
 
 * 枚举类型是强类型的。例如，将 `Color.Orange` 作为参数传给要求 `Fruit` 枚举类型的方法，编译器会报错。<sup>①</sup>
 
-> ① `ruit` 枚举类型定义的应该是水果，而 `Color` 枚举类型定义的是颜色。虽然两个枚举类型中都有一个 `Orange`，但分别代表橙子和橙色。 ——译注
+> ① `Fruit` 枚举类型定义的应该是水果，而 `Color` 枚举类型定义的是颜色。虽然两个枚举类型中都有一个 `Orange`，但分别代表橙子和橙色。 ——译注
 
 在 Microsoft .NET Framework 中，枚举类型不只是编译器所关心的符号，它还是类型系统中的“一等公民”，能实现很强大的操作。而在其他环境(比如非托管 C++)中，枚举类型是没有这个特点的。
 
@@ -90,7 +90,7 @@ C# 编译器将枚举类型视为基元类型。所以可用许多熟悉的操�
 给定一个枚举类型的实例，可调用从`System.Enum` 继承的 `ToString` 方法，把这个值映射为以下几种字符串表示：
 
 ```C#
-Color c = Color.Blue;   
+Color c = Color.Blue;
 Console.WriteLine(c);                   // “Blue” (常规格式)
 Console.WriteLine(c.ToString());        // “Blue” (常规格式)
 Console.WriteLine(c.ToString("G"));     // “Blue” (常规格式)
@@ -162,7 +162,7 @@ public static TEnum[] GetEnumValues<TEnum>() where TEnum : struct {
 ```C#
 // 返回数值的字符串表示
 public static String GetName(Type enumType, Object value);      // System.Enum 中定义
-public String GetEnumName(Object value);                        // System.Type 中定义 
+public String GetEnumName(Object value);                        // System.Type 中定义
 
 // 返回一个 String 数组， 枚举中每个符号都对应一个 String
 public static String[] GetNames(Type enumType);                 // System.Enum 中定义
@@ -207,7 +207,7 @@ public Boolean IsEnumDefined(Object value);                         // System.Ty
 // 显示 “True”，因为 Color 将 Red 定义为 1
 Console.WriteLine(Enum.IsDefined(typeof(Color), 1));
 
-// 显示 “True”，因为 Color 将 White 定义为 0 
+// 显示 “True”，因为 Color 将 White 定义为 0
 Console.WriteLine(Enum.IsDefined(typeof(Color), "White"));
 
 // 显示 “False”， 因为检查要区分大小写
@@ -264,7 +264,7 @@ public enum FileAttributes {
     Encrypted           = 0x04000,
     IntegrityStream     = 0x08000,
     NoScrubData         = 0x20000
-} 
+}
 ```
 
 判断文件是否隐藏可执行以下代码：
@@ -275,10 +275,10 @@ FileAttributes attributes = File.GetAttributes(file);
 Console.WriteLine("Is {0} hidden? {1}", file, (attributes & FileAttributes.Hidden) != 0);
 ```
 
-> 注意 `Enum` 类定义了一个 `HasFlag` 方法：  
-  `public Boolean HasFlag(Enum flag);`  
-可利用该方法重写上述 `Console.WriteLine` 调用：  
-`Console.WriteLine("Is {0} hidden? {1}", file, attributes.HasFlag(FileAttributes.Hidden));`  
+> 注意 `Enum` 类定义了一个 `HasFlag` 方法：
+  `public Boolean HasFlag(Enum flag);`
+可利用该方法重写上述 `Console.WriteLine` 调用：
+`Console.WriteLine("Is {0} hidden? {1}", file, attributes.HasFlag(FileAttributes.Hidden));`
 但我建议避免使用 `HasFlag` 方法，理由是：由于它获取 `Enum` 类型的参数，所以传给它的任何值都必须装箱，产生一次内存分配。
 
 以下代码演示了如何为文件设置只读和隐藏特性：
@@ -292,7 +292,7 @@ Console.WriteLine("Is {0} hidden? {1}", file, (attributes & FileAttributes.Hidde
 定义用于标识位标志的枚举类型时，当然应该显式为每个符号分配一个数值。通常，每个符号都有单独的一个位处于 on 状态。此外，经常都要定义一个值为 `0` 的 `None` 符号。还可定义一些符合来代表常见的位组合(参见下面的 `ReadWrite` 符号)。另外，强烈建议向枚举类型应用定制特性类型 `System.FlagsAttribute` ，如下所示：
 
 ```C#
-[Flags]   // C# 编译器允许 “Flags” 或 “FlagsAttribute” 
+[Flags]   // C# 编译器允许 “Flags” 或 “FlagsAttribute”
 internal enum Actions {
     None        = 0,
     Read        = 0x0001,

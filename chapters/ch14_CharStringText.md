@@ -50,13 +50,13 @@ public static class Program {
 
 最后，可以使用三种技术实现各种数值类型与 `Char` 实例的相互转换。下面按照优先顺序列出这些技术。
 
-* **转型(强制类型转换)**  
+* **转型(强制类型转换)**
   将`Char`转换成数值(比如`Int32`)最简单的办法就是转型。这是三种技术中效率最高的，因为编译器会生成中间语言(IL)指令来执行转换，而且不必调用方法。此外，有的语言(比如 C#)允许指定转换时是使用 checked 还是 unchecked 代码(参见 5.1 节”编程语言的基元类型“)。
 
-* **使用 Convert 类型**  
-  `System.Convert` 类型提供了几个静态方法来实现 `Char` 和数值类型的相互转型。所有这些转换都以 checked 方式执行，发现转换将造成数据丢失就抛出 `OverflowException`异常。  
+* **使用 Convert 类型**
+  `System.Convert` 类型提供了几个静态方法来实现 `Char` 和数值类型的相互转型。所有这些转换都以 checked 方式执行，发现转换将造成数据丢失就抛出 `OverflowException`异常。
 
-* **使用 IConvertible 接口**  
+* **使用 IConvertible 接口**
   `Char` 类型和 FCL 中的所有数值类型都实现了 `IConvertible` 接口。该接口定义了像`ToUInt16` 和 `ToChar` 这样的方法。这种技术效率最差，因为在值类型上调用接口方法`ToUInt16`和`ToChar`这样的方法。这种技术效率最差，因为在值类型上调用接口方法要求对实例进行装箱——`Char`和所有数值类型都是值类型。如果某个类型不能转换(比如 `Char` 转换成 `Boolean`)，或者转换将造成数据丢失，`IConvertible`的方法会抛出`System.InvalidCastException` 异常。注意，许多类型(包括 FCL 的`Char`和数值类型)都将`IConvertible`的方法实现为显式接口成员<sup>①</sup>。这意味着为了调用接口的任何方法，都必须先将实例显式转型为一个`IConvertible`。`IConvertible`的所有方法(`GetTypeCode`除外)都接受对实现了`IFormatProvider`接口的一个对象的引用。如果转换时需要考虑语言文化信息，该参数就很有用。但大多数时候都可以忽略语言文化，为这个参数传递`null`值。
 
 > ① 参见 13.9 节”用显式接口方法实现来增强编译时类型安全性“。
@@ -113,7 +113,7 @@ public static class Program {
 
 > ① 堆和线程栈的详情请参见 4.4 节 ”运行时的相互关系“
 
-### 14.2.1 构造字符串  
+### 14.2.1 构造字符串
 
 许多编程语言(包括 C#)都将 `String` 视为基元类型——也就是说，编译器允许在源代码中直接使用字面值(literal)字符串。编译器将这些字符串放到模块的元数据中，并在运行时加载和引用它们。
 
@@ -173,7 +173,7 @@ C#提供了一些特殊语法来帮助开发人员在源代码中输入字面值
 String s = "Hi\r\nthere.";
 ```
 
-> 重要提示 上例虽然在字符串中硬编码了回车符和换行符，但一般不建议这样做。相反，`System.Environment`类型定义了只读`NewLine`属性。应用程序在 Microsoft Windows 上运行时，该属性返回由回车符和换换行符构成的字符串。例如，如果将公共语言基础结构(CLI)移植到 UNIX 系统，`NewLine`属性将返回由单字符`\n‘构成的字符串。以下才是定义上述字符串的正确方式，它在任何平台上都能正确工作：    
+> 重要提示 上例虽然在字符串中硬编码了回车符和换行符，但一般不建议这样做。相反，`System.Environment`类型定义了只读`NewLine`属性。应用程序在 Microsoft Windows 上运行时，该属性返回由回车符和换换行符构成的字符串。例如，如果将公共语言基础结构(CLI)移植到 UNIX 系统，`NewLine`属性将返回由单字符`\n‘构成的字符串。以下才是定义上述字符串的正确方式，它在任何平台上都能正确工作：
 
 >`String s = "Hi" + Environment.NewLine + "there."`；
 
@@ -202,7 +202,7 @@ String file = @"C:\Windows\System32\Notepad.exe";
 
 ### 14.2.2 字符串是不可变的
 
-`String` 对象最重要的一点就是不可变(immutable)。也就是说，字符串一经创建便不能更改，不能变长、变短或修改其中的任何字符。使字符串不可变有几方面的好处。首先，它允许在一个字符串上执行各种操作，而不实际地更改字符串：  
+`String` 对象最重要的一点就是不可变(immutable)。也就是说，字符串一经创建便不能更改，不能变长、变短或修改其中的任何字符。使字符串不可变有几方面的好处。首先，它允许在一个字符串上执行各种操作，而不实际地更改字符串：
 
 ```C#
 if (s.ToUpperInvariant().Substring(10, 21).EndsWith("EXE")){
@@ -218,7 +218,7 @@ if (s.ToUpperInvariant().Substring(10, 21).EndsWith("EXE")){
 
 出于对性能的考虑，`String`类型与 CLR 紧密集成。具体地说，CLR 知道 `String` 类型中定义的字段如何布局，会直接访问这些字段。但为了获得这种性能和直接访问的好处，`String`只能是密封类。换言之，不能把它作为自己类型的基类。如果允许`String`作为基类来定义自己的类型，就能添加自己的字段，而这会破坏 CLR 对于 `String` 类型的各种预设。此外，还可能破坏 CLR 团队因为 `String` 对象”不可变“而做出的各种预设。
 
-### 14.2.3 比较字符串 
+### 14.2.3 比较字符串
 
 ”比较“或许是最常见的字符串操作。一般因为两个原因要比较字符串：判断相等性或者排序(通常是为了显示给用户看)。
 
@@ -332,7 +332,7 @@ public static class Program {
 
 ```cmd
 Ordinal comparison: 'Strasse' != 'Straße'
-Cultural comparison: 'Strasse' == 'Straße' 
+Cultural comparison: 'Strasse' == 'Straße'
 ```
 
 > 注意 `Compare`方法如果执行的不是序号比较就会进行“字符展开”(character expansion)，也就是将一个字符展开成忽视语言文化的多个字符。在前例中，德语 Eszet 字符 “ß” 总是展开成“ss”。类似地，“Æ” 连字总是展开成“AE”。所以在上述代码中，无论传递什么语言文化，对`Compare`的第二个调用始终返回0.
@@ -386,21 +386,21 @@ public sealed class Program {
         output += String.Format("{0} Compare: {1} {3} {2}",
         ci.Name, s1, s2, symbol[x + 1]);
         output += Environment.NewLine + Environment.NewLine;
-        
+
         // 以下代码演示了如何将 CompareInfo.Compare 的
         // 高级选项应用于两个日语字符串。
         // 一个字符串代表用平假名写成的单词“shinkansen”(新干线)；
         // 另一个字符串代表用片假名写成的同一个单词
         s1 = "しんかんせん"; // ("\u3057\u3093\u304B\u3093\u305b\u3093")
         s2 = "シンカンセン"; // ("\u30b7\u30f3\u30ab\u30f3\u30bb\u30f3")
-                 
+
         // 以下是默认比较结果
         ci = new CultureInfo("ja-JP");
         x = Math.Sign(String.Compare(s1, s2, true, ci));
         output += String.Format("Simple {0} Compare: {1} {3} {2}",
         ci.Name, s1, s2, symbol[x + 1]);
         output += Environment.NewLine;
-        
+
         // 以下是忽略日语假名的比较结果
         CompareInfo compareInfo = CompareInfo.GetCompareInfo("ja-JP");
         x = Math.Sign(compareInfo.Compare(s1, s2, CompareOptions.IgnoreKanaType));
@@ -413,7 +413,7 @@ public sealed class Program {
 
 生成并运行以上代码得到如图 14-1 所示的结果。
 
-![14_1](../resources/images/14_1.png)  
+![14_1](../resources/images/14_1.png)
 图 14-1 字符串排序结果
 
 > 注意<sup>①</sup> 源代码不要用 ANSI 格式保存，否则日语字符会丢失。要在 Microsoft Visual Studio中保存这个文件，请打开“另存文件为”对话框，单击“保存”按钮右侧的下箭头，选择“编码保存”，并选择“Unicode(UTF-8带签名)-代码页 65001”。Microsoft C# 编译器用这个代码也就能成功解析源代码文件了。
@@ -567,20 +567,20 @@ public sealed class Program {
 
 编译并运行上述代码，会显示如图 14-2、图 14-3 和 图 14-4 所示的对话框。
 
-![14_2](../resources/images/14_2.png)  
-图 14-2 `SubstringByTextElements`的结果 
+![14_2](../resources/images/14_2.png)
+图 14-2 `SubstringByTextElements`的结果
 
-![14_3](../resources/images/14_3.png)  
-图 14-3 `GetTextElementEnumerator`的结果  
+![14_3](../resources/images/14_3.png)
+图 14-3 `GetTextElementEnumerator`的结果
 
-![14_4](../resources/images/14_4.png)  
-图 14-4 `ParseCombiningCharacters`的结果  
+![14_4](../resources/images/14_4.png)
+图 14-4 `ParseCombiningCharacters`的结果
 
 ### 14.2.7 其他字符串操作
 
 还可利用`String`类型提供的一些方法来复制整个字符串或者它的一部分。表 14-1 总结了这些方法。
 
-表 14-1 用于复制字符串的方法 
+表 14-1 用于复制字符串的方法
 |成员名称|方法类型|说明|
 |:---:|:---:|:---:|
 |`Clone`|实例|返回对同一个对象(`this`)的引用。能这样做是因为`String`对象不可变(immutable)。该方法实现了 `String` 的 `ICloneable`接口|
@@ -601,23 +601,23 @@ public sealed class Program {
 
 ### 14.3.1 构造`StringBuilder`对象
 
-和`String`类不同，CLR 不觉得`StringBuilder`类有什么特别。此外，大多数语言(包括C#)都不将`StringBuilder`类视为基元类型。要像构造其他任何非基元类型那样构造`StringBuilder`对象：  
+和`String`类不同，CLR 不觉得`StringBuilder`类有什么特别。此外，大多数语言(包括C#)都不将`StringBuilder`类视为基元类型。要像构造其他任何非基元类型那样构造`StringBuilder`对象：
 
-`StringBuilder sb = new StringBuilder();` 
+`StringBuilder sb = new StringBuilder();`
 
 `StringBuilder`类型提供了许多构造器。每个构造器的职责是分配和初始化由每个`StringBuilder`对象维护的状态。下面解释了`StringBuilder`类的关键概念。
 
-* **最大容量**  
+* **最大容量**
   一个`Int32`值，指定了能放到字符串中的最大字符数。默认值是`Int32.MaxValue`(约 20 亿)。一般不用更改这个值，但有时需要指定较小的最大容量以确保永远不会创建超出特定长度的字符串。构造好之后，这个`StringBuilder`的最大容量就固定下来了，不能再变。
-  
-* **容量**  
-  一个`Int32`值，指定了由`StringBuilder`维护的字符数组的长度。默认为`16`。如果事先知道要在这个`StringBuilder`中放入多少字符，那么构造`StringBuilder`对象时应该自己设置容量。  
+
+* **容量**
+  一个`Int32`值，指定了由`StringBuilder`维护的字符数组的长度。默认为`16`。如果事先知道要在这个`StringBuilder`中放入多少字符，那么构造`StringBuilder`对象时应该自己设置容量。
   向字符数组追加字符时，`StringBuilder`会检测数组会不会超过设定的容量。如果会，`StringBuilder`会自动倍增容量字段，用新容量来分配新数组，并将原始数组的字符复制到新数组中。随后，原始数组可以被垃圾回收。数组动态扩容会损害性能。要避免就要设置一个合适的初始容量。
-  
-* **字符数组**  
+
+* **字符数组**
   一个由`Char` 结构构成的数组，负责维护“字符串”的字符内容。字符数总是小于或等于“容量”和“最大容量”值。可用`StringBuilder`的`Length`属性来获取数组中已经使用的字符数。`Length`总是小于或等于`StringBuilder`的“容量”值。可在构造`StringBuilder`时传递一个`String`来初始化字符数组。不传递字符串，数组刚开始不包含任何字符——也就是说，`Length`属性返回`0`。
 
-### 14.3.2 `StringBuilder`的成员 
+### 14.3.2 `StringBuilder`的成员
 
 和`String`不同，`StringBuilder`代表可变(mutable)字符串。也就是说，`StringBuilder`的大多数成员都能更改字符数组的内容，同时不会造成在托管堆上分配新对象。`StringBuilder`只有以下两种情况才会分配新对象。
 
@@ -747,14 +747,14 @@ MessageBox.Show(s);
 
 生成并运行上述代码，会显示如果 14-5 所示的消息框。
 
-![14_5](../resources/images/14_5.png)  
+![14_5](../resources/images/14_5.png)
 图 14-5 数值正确格式化以表示越南货币
- 
+
 在内部，`Decimal`的`ToString`方法发现`formatProvider`实参不为`null`，所以会像下面这样调用对象的`GetFormat`方法：
 
 `NumberFormatInfo nfi = (NumberFormatInfo) formatProvider.GetFormat(typeof(NumberFormatInfo));`
 
-`ToString`正是采取这种方式从 `CultureInfo` 对象获取恰当获取恰当的数字格式信息。数值类型(比如 `Decimal`)只请求数字格式信息。但其他类型(如 `DateTime`)可能像下面这样调用 `GetFormat`: 
+`ToString`正是采取这种方式从 `CultureInfo` 对象获取恰当获取恰当的数字格式信息。数值类型(比如 `Decimal`)只请求数字格式信息。但其他类型(如 `DateTime`)可能像下面这样调用 `GetFormat`:
 
 `DateTimeFormatInfo dtfi = (DateTimeFormatInfo)formatProvider.GetFormat(typeof(DateTimeFormatInfo));`
 
@@ -770,7 +770,7 @@ MessageBox.Show(s);
 
 生成并运行上述代码，会出现如果 14-6 所示的消息框。注意，在生成的字符串中，第一个字符是`¤`，即国际通用货币符号(U+00A4)。
 
-![14_6](../resources/images/14_6.png)  
+![14_6](../resources/images/14_6.png)
 
 图 14-6 格式化数值来表示语言文化中性的货币值
 
@@ -877,9 +877,9 @@ public static class Program {
 
 编译并运行上述代码，而且“en-US”是线程当前的语言文化，控制台上将显示以下输出(你的日期当然不同):
 
-`Jeff <B>123</B> January 30` 
+`Jeff <B>123</B> January 30`
 
-`Main`构造了一个空白`StringBuilder`，在其中附加了格式化好的字符串。调用`AppendFormat`时，第一个参数是`BoldInt32s`类的实例。该类实现了前面描述的`IFormatProvider`接口，另外还实现了`ICustomFormatter`接口，另外还实现了`ICustomFormatter`接口：
+`Main`构造了一个空白`StringBuilder`，在其中附加了格式化好的字符串。调用`AppendFormat`时，第一个参数是`BoldInt32s`类的实例。该类实现了前面描述的`IFormatProvider`接口，另外还实现了`ICustomFormatter`接口：
 
 ```C#
 public interface ICustomFormatter {
@@ -892,9 +892,9 @@ public interface ICustomFormatter {
 ```C#
 public StringBuilder AppendFormat(IFormatProvider formatProvider, String format, params Object[] args) {
     // 如果传递了一个 IFormatProvider，
-    // 就调查它是否提供了一个 ICustomFormatter 对象 
+    // 就调查它是否提供了一个 ICustomFormatter 对象
     ICustomFormatter cf = null;
-            
+
     if (formatProvider != null)
         cf = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
 
@@ -1190,7 +1190,7 @@ Unicode (UTF-8)
     CodePage=65001, WindowsCodePage=1200
     WebName=utf-8, HeaderName=utf-8, BodyName=utf-8
     IsBrowserDisplay=True, IsBrowserSave=True
-    IsMailNewsDisplay=True, IsMailNewsSave=True 
+    IsMailNewsDisplay=True, IsMailNewsSave=True
 ```
 
 表 14-3 总结了 `Encoding` 的所有派生类都提供的常用方法。
@@ -1332,7 +1332,7 @@ public static class Program {
 
 `System.Runtime.InteropServices.Marshal` 类提供了 5 个方法来将一个 `SecureString` 的字符解密到非托管内存缓冲区。所有方法都是静态方法，所有方法都接受一个 `SecureString` 参数，而且所有方法都返回一个 `IntPtr`。每个方法都另有一个配对的方法，必须调用配对方法来清零并释放内部缓冲区。表 14-4 总结了 `System.Runtime.InteropServices.Marshal` 类提供的将 `SecureString` 解密到内部缓冲区的方法以及对应的清零和释放缓冲区的方法。
 
-表 14-4 `Marshal` 类提供的用于操纵安全字符串的方法 
+表 14-4 `Marshal` 类提供的用于操纵安全字符串的方法
 
 |将 `SecureString` 解密到缓冲的方法| 清零并释放缓冲区的方法|
 |:---:|:---:|
