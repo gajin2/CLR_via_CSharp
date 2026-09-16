@@ -18,7 +18,7 @@ Int32[] myIntegers;                 // 声明一个数组引用
 myIntegers = new Int32[100];        // 创建含有 100 个 Int32 的数组
 ```
 
-第一行代码声明 `myIntegers` 变量，它能指向包含 `Int32` 值的一维数组。`myIntegers` 刚开始设为 `null`，因为当时还没有分配数组。第二行代码分配了含有 100 个 `Int32` 值的数组，所有 `Int32` 都被初始化为 0。由于数组是引用类型，所以会在托管堆上分配容纳 100 个未装箱`Int32`所需的内存块。实际上，除了数组元素，数组对象占据的内存块还包含一个类型对象指针、一个同步块索引和一些额外的成员<sup>①<sup>。该数组的内存块地址被返回并保存到`myIntegers`变量中。
+第一行代码声明 `myIntegers` 变量，它能指向包含 `Int32` 值的一维数组。`myIntegers` 刚开始设为 `null`，因为当时还没有分配数组。第二行代码分配了含有 100 个 `Int32` 值的数组，所有 `Int32` 都被初始化为 0。由于数组是引用类型，所以会在托管堆上分配容纳 100 个未装箱`Int32`所需的内存块。实际上，除了数组元素，数组对象占据的内存块还包含一个类型对象指针、一个同步块索引和一些额外的成员<sup>①</sup>。该数组的内存块地址被返回并保存到`myIntegers`变量中。
 
 > ① 这些额外的成员称为 overhead 字段或者说“开销字段”。 —— 译注
 
@@ -33,7 +33,7 @@ myControls = new Control[50];       // 创建含有 50 个 Control 引用的数�
 
 图 16-1 展示了值类型的数组和引用类型的数组在托管堆中的情况。
 
-![16_1](../resources/images/16_1.png)  
+![16_1](../resources/images/16_1.png)
 
 图 16-1 值类型和引用类型的数组在托管堆中的情况
 
@@ -99,7 +99,9 @@ for (Int32 x = 0; x < myPolygons[0].Length; x++)
 
 前面展示了如何创建数组对象，如何初始化数组中的元素。C# 允许用一个语句做这两件事情。例如：
 
-`String[] names = new String[] { "Aidan", "Grant" };`
+```cs
+String[] names = new String[] { "Aidan", "Grant" };
+```
 
 大括号中的以逗号分隔的数据的数据项称为**数组初始化器**(array initializer)。每个数据项都可以是一个任意复杂度的表达式；在多维数组的情况下，则可以是一个嵌套的数组初始化器。上例只使用了两个简单的`String`表达式。
 
@@ -130,7 +132,9 @@ var names = new[] { "Aidan", "Grant", 123 }；
 
 作为初始化数组时的一个额外的语法奖励，还可以像下面这样写：
 
-`String[] names = { "Aidan", "Grant" };`
+```cs
+String[] names = { "Aidan", "Grant" };
+```
 
 注意，赋值操作符(`=`)右侧只给出了一个初始化器，没有 `new`，没有类型，没有 `[]`。这个语法可读性很好，但遗憾的是，C#编译器不允许在这种语法中使用隐式类型的局部变量：
 
@@ -263,7 +267,9 @@ oa[3] = 5;                  // 性能损失：CLR 检查 oa 的元素类型是�
 
 像下面这样声明数组变量：
 
-`FileStream[] fsArray;`  
+```cs
+FileStream[] fsArray;
+```
 
 CLR 会自动为 AppDomain 创建一个 `FileStream[]` 类型。该类型隐式派生自 `System.Array`类型；因此，`System.Array`类型定义的所有实例方法和属性都将由 `FileStream[]` 继承，使这些方法和属性能通过 `fsArray` 变量调用。这极大方便了数组处理，因为`System.Array`定义了许多有用的实例方法和属性，比如 `Clone`，`CopyTo`，`GetLength`，`GetLongLength`，`GetLowerBound`，`GetUpperBound`，`Length`，`Rank`等。
 
@@ -339,7 +345,7 @@ if (appointments != null) {
 
 ## <a name="16_6">16.6 创建下限非零的数组</a>
 
-前面提到过，能创建和操作下限非 0 的数组。可以调用数组的静态 `CreatInstance` 方法来动态创建自己的数组。该方法有若干个重载版本，允许指定数组元素的类型、数组的维数、每一维的下限和每一维的元素数目。`CreateInstance` 为数组分配内存，将参数信息保存到数组的内存块的开销(overhead)部分，然后返回对该数组的引用。如果数组维数是2 或 2 以上，就可以把 `CreateInstance` 返回的引用转型为一个 `ElementType[]` 变量(`ElementType`要替换为类型名称)，以简化对数组中的元素的访问。如果只有一维，C# 要求必须使用该 `Array` 的 `GetValue` 和 `SetValue`方法访问数组元素。
+前面提到过，能创建和操作下限非 0 的数组。可以调用数组的静态 `CreatInstance` 方法来动态创建自己的数组。该方法有若干个重载版本，允许指定数组元素的类型、数组的维数、每一维的下限和每一维的元素数目。`CreateInstance` 为数组分配内存，将参数信息保存到数组的内存块的开销(overhead)部分，然后返回对该数组的引用。如果数组维数是2 或 2 以上，就可以把 `CreateInstance` 返回的引用转型为一个 `ElementType[,]` 变量(`ElementType`要替换为类型名称)，以简化对数组中的元素的访问。如果只有一维，C# 要求必须使用该 `Array` 的 `GetValue` 和 `SetValue`方法访问数组元素。
 
 以下代码演示了如何动态创建由 `System.Decimal` 值构成的二维数组。第一维代表 2005 到 2009(含)年份，第二维 1 到 4(含)季度。代码遍历动态数组中的所有元素。我本来可以将数组的上下限硬编码到代码中，这样能获取更好的性能。但我最后决定使用`System.Array`的`GetLowerBound`和`GetUpperBound`方法来演示它们的用法：
 
@@ -351,7 +357,7 @@ public sealed class DynamicArrays {
         // 我想创建一个二维数组 [2005..2009][1..4]
         Int32[] lowerBounds = { 2005, 1 };
         Int32[] lengths     = {    5, 4 };
-        Decimal[,] quarterlyRevenue = (Decimal[,]) 
+        Decimal[,] quarterlyRevenue = (Decimal[,])
             Array.CreateInstance(typeof(Decimal), lengths, lowerBounds);
 
         Console.WriteLine("{0,4} {1,9} {2,9} {3,9} {4,9}", "Year", "Q1", "Q2", "Q3", "Q4");
@@ -375,11 +381,11 @@ public sealed class DynamicArrays {
 
 ```cmd
 Year     Q1        Q2        Q3        Q4
-2005     $0.00     $0.00     $0.00     $0.00 
-2006     $0.00     $0.00     $0.00     $0.00 
-2007     $0.00     $0.00     $0.00     $0.00 
-2008     $0.00     $0.00     $0.00     $0.00 
-2009     $0.00     $0.00     $0.00     $0.00 
+2005     $0.00     $0.00     $0.00     $0.00
+2006     $0.00     $0.00     $0.00     $0.00
+2007     $0.00     $0.00     $0.00     $0.00
+2008     $0.00     $0.00     $0.00     $0.00
+2009     $0.00     $0.00     $0.00     $0.00
 ```
 
 ## <a name="16_7">16.7 数组的内部工作原理</a>
@@ -421,8 +427,8 @@ public sealed class DynamicArrays {
         a = Array.CreateInstance(typeof(String), new Int32[] { 0, 0 }, new Int32[] { 0, 0 });
         Console.WriteLine(a.GetType());    // "System.String[,]"
 
-        //
-        a = Array.CreateInstance(typeof(String), new Int32[] { 0, 0 }, new Int32[] { 0, 0 });
+        // 创建二维 1 基数组，其中不包含任何元素
+        a = Array.CreateInstance(typeof(String), new Int32[] { 0, 0 }, new Int32[] { 1, 1 });
         Console.WriteLine(a.GetType());    // "System.String[,]"
     }
 }
@@ -465,7 +471,7 @@ using System.Diagnostics;
 
 public static class Program {
     private const Int32 c_numElements = 10000;
-     
+
     public static void Main() {
         // 声明二维数组
         Int32[,] a2Dim = new Int32[c_numElements, c_numElements];
@@ -515,7 +521,7 @@ public static class Program {
                 }
             }
         }
-        return sum;       
+        return sum;
     }
 }
 ```
@@ -556,7 +562,7 @@ public static class Program {
     private static void StackallocDemo() {
         unsafe {
             const Int32 width = 20;
-            Char* pc = stackalloc Char[width];      // 在栈上分配数组 
+            Char* pc = stackalloc Char[width];      // 在栈上分配数组
 
             String s = "Jeffrey Richter";           // 15个字符
 
@@ -606,4 +612,3 @@ internal unsafe struct CharArray {
 * 数组的元素类型必须是以下类型之一：`Boolean`，`Char`，`SByte`，`Byte`，`Int16`，`Int32`，`UInt16`，`UInt32`，`Int64`，`Single`或`Double`。
 
 要和非托管代码进行互操作，而且非托管数据结构也有一个内联数组，就特别适合使用内联的数组。但内联数组也能用于其他地方。上述代码中的 `InlineArrayDemo` 方法提供了如何使用内联数组的一个例子。它执行和 `StackallocDemo` 方法一样的功能，只是用了不一样的方式。
- 
