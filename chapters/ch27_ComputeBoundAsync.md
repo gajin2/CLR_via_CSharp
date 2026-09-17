@@ -14,9 +14,9 @@
 
 本章将讨论以异步方式操作的各种方式。异步的计算限制操作要用其他线程执行，例子包括编译代码、拼写检查、语法检测、电子表格重计算、音频或视频数据转码以及生成图像的缩略图。在金融和工程应用程序中，计算限制的操作也是十分普遍的。
 
-大多数应用程序都不会花太多时间处理内存数据或执行计算。要验证这一点，可以打开“任务管理器”，选择“性能”标签。如果 CPU 利用率不到 100%(大多数时候都如此)，就表明当前运行的进程没有使用由计算机的 CPU 内核提供的全部计算能力。CPU 利用率低于 100% 时，进程中的部分(但不是全部)线程根本没有运行。相反，这些线程正在等待某个输入或输出操作。例如，这些线程可能正在等待一个计时器到期<sup>①</sup>；等待在数据库/Web服务器/文件/网络/其他硬件设备中读取或写入数据；或者等待按键、鼠标移动或鼠标点击等。执行 I/O 限制的操作时，Microsoft Windows 设备驱动程序让硬件设备为你“干活儿”，但 CPU 本身“无所事事”。由于线程不在 CPU 上运行，所以“任务管理器”说 CPU 利用率很低。
+大多数应用程序都不会花太多时间处理内存数据或执行计算。要验证这一点，可以打开「任务管理器」，选择「性能」标签。如果 CPU 利用率不到 100%(大多数时候都如此)，就表明当前运行的进程没有使用由计算机的 CPU 内核提供的全部计算能力。CPU 利用率低于 100% 时，进程中的部分(但不是全部)线程根本没有运行。相反，这些线程正在等待某个输入或输出操作。例如，这些线程可能正在等待一个计时器到期<sup>①</sup>；等待在数据库/Web服务器/文件/网络/其他硬件设备中读取或写入数据；或者等待按键、鼠标移动或鼠标点击等。执行 I/O 限制的操作时，Microsoft Windows 设备驱动程序让硬件设备为你「干活儿」，但 CPU 本身「无所事事」。由于线程不在 CPU 上运行，所以「任务管理器」说 CPU 利用率很低。
 
-> ① 计时器“到期”(come due)的意思是还有多久触发它。
+> ① 计时器「到期」(come due)的意思是还有多久触发它。
 
 但是，即使 I/O 限制非常严重的应用程序也要对接收到的数据执行一些计算，而并行执行这些计算能显著提升应用程序的吞吐能力。本章首先介绍 CLR 的线程池，并解释了和它的工作和使用有关的一些基本概念。这些信息非常重要。为了设计和实现可伸缩的、响应灵敏和可靠的应用程序和组件，线程池是你必须采用的核心技术。然后，本章展示了通过线程池执行计算限制操作的各种机制。
 
@@ -41,11 +41,11 @@ static bool QueueUserWorkItem(WaitCallback callBack);
 static bool QueueUserWorkItem(WaitCallback callBack, Object state);
 ```
 
-这些方法向线程池的队列添加一个“工作项”(work item)以及可选的状态数据。然后，所有方法会立即返回。工作项其实就是由 `callBack` 参数标识的一个方法，该方法将由线程池线程调用。可向方法传递一个 `state` 实参(状态数据)。无 `state` 参数的那个版本的 `QueueUserWorkItem` 则向回调方法传递`null`。最终，池中的某个线程会处理工作项，造成你指定的方法被调用。你写的回调方法必须匹配 `System.Threading.WaitCallback`委托类型，后者的定义如下：
+这些方法向线程池的队列添加一个「工作项」(work item)以及可选的状态数据。然后，所有方法会立即返回。工作项其实就是由 `callBack` 参数标识的一个方法，该方法将由线程池线程调用。可向方法传递一个 `state` 实参(状态数据)。无 `state` 参数的那个版本的 `QueueUserWorkItem` 则向回调方法传递`null`。最终，池中的某个线程会处理工作项，造成你指定的方法被调用。你写的回调方法必须匹配 `System.Threading.WaitCallback`委托类型，后者的定义如下：
 
 `delegate void WaitCallback(Object state);`
 
-> 注意 `WaitCallback` 委托、`TimerCallback` 委托(参见本章 27.8 节“执行定时计算限制操作”的讨论)和 `ParameterizedThreadStart` 委托(在第 26 章“线程基础” 中讨论)签名完全一致。定义和该签名匹配的方法后，使用 `ThreadPool.QueueUserWorkItem`、`System.Threading.Timer` 和 `System.Threading.Thread` 对象都可调用该方法。
+> 注意 `WaitCallback` 委托、`TimerCallback` 委托(参见本章 27.8 节「执行定时计算限制操作」的讨论)和 `ParameterizedThreadStart` 委托(在第 26 章「线程基础」中讨论)签名完全一致。定义和该签名匹配的方法后，使用 `ThreadPool.QueueUserWorkItem`、`System.Threading.Timer` 和 `System.Threading.Thread` 对象都可调用该方法。
 
 ```C#
 using System;
@@ -90,17 +90,17 @@ Main thread: Doing other work here...
 
 之所以输出行的顺序会发生变化，是因为两个方法相互之间是异步运行的。Windows 调度器决定先调度哪一个线程。如果应用程序在多核机器上运行，可能同时调度它们。
 
-> 注意 一旦回调方法抛出未处理的异常，CLR 会终止进程(除非宿主强加了它自己的策略)。未处理异常的详情已在第 20 章“异常和状态管理”进行了讨论。
+> 注意 一旦回调方法抛出未处理的异常，CLR 会终止进程(除非宿主强加了它自己的策略)。未处理异常的详情已在第 20 章「异常和状态管理」进行了讨论。
 
-> 注意 对于 Windows Store 应用，`System.Threading.ThreadPool` 类是没有公开的。但在使用 `System.Threading.Tasks` 命名空间中的类型时，这个类被间接地使用(详情参见本章稍后的 27.5 节“任务”)。
+> 注意 对于 Windows Store 应用，`System.Threading.ThreadPool` 类是没有公开的。但在使用 `System.Threading.Tasks` 命名空间中的类型时，这个类被间接地使用(详情参见本章稍后的 27.5 节「任务」)。
 
 ## <a name="27_3">27.3 执行上下文</a>
 
 每个线程都关联了一个执行上下文数据结构。**执行上下文**(execution context)包括的东西有安全设置(压缩栈、`Thread` 的 `Principal`属性和 Windows 身份)、宿主设置(参见 `System.Threading.HostExecutionContextManager`)以及逻辑调用上下文数据(参见`System.Runtime.Remoting.Messaging.CallContext` 的 `LogicalSetData` 和 `LogicalGetData`方法)。线程执行它的代码时，一些操作会受到线程执行上下文设置(尤其是安全设置)的影响。理想情况下，每当一个线程(初始线程)使用另一个线程(辅助线程)执行任务时，前者的执行上下文应该流向(复制到)辅助线程。这就确保了辅助线程执行的任何操作使用的是相同的安全设置和宿主设置。还确保了再初始线程的逻辑调用上下文中存储的任何数据都适用于辅助线程。
 
-默认情况下，CLR 自动造成初始线程的执行上下文“流向”任何辅助线程。这造成将上下文信息传给辅助线程，但这会对性能造成一定影响。这是因为执行上下文中包含大量信息，而收集所有这些信息，再把它们复制到辅助线程，要耗费不少时间。如果辅助线程又采用了更多的辅助线程，还必须创建和初始化更多的执行上下文数据结构。
+默认情况下，CLR 自动造成初始线程的执行上下文「流向」任何辅助线程。这造成将上下文信息传给辅助线程，但这会对性能造成一定影响。这是因为执行上下文中包含大量信息，而收集所有这些信息，再把它们复制到辅助线程，要耗费不少时间。如果辅助线程又采用了更多的辅助线程，还必须创建和初始化更多的执行上下文数据结构。
 
-`System.Threading`命名空间有一个 `ExecutionContext` 类，它允许你控制线程的执行上下文如何从一个线程“流”向另一个。下面展示了这个类的样子：
+`System.Threading`命名空间有一个 `ExecutionContext` 类，它允许你控制线程的执行上下文如何从一个线程「流」向另一个。下面展示了这个类的样子：
 
 ```C#
 public sealed class ExecutionContext : IDisposable, ISerializable {
@@ -116,7 +116,7 @@ public sealed class ExecutionContext : IDisposable, ISerializable {
 
 下例展示了向 CLR 的线程池队列添加一个工作项的时候，如何通过阻止执行上下文的流动来影响线程逻辑调用上下文中的数据<sup>①</sup>：
 
-> ① 添加到逻辑调用上下文的项必须是可序列化的，详情参见第 24 章“运行时序列化”。对于包含了逻辑调用上下文数据项的执行上下文，让它流动起来可能严重损害性能，因为为了捕捉执行上下文，需要对所有数据项进行序列化和反序列化。
+> ① 添加到逻辑调用上下文的项必须是可序列化的，详情参见第 24 章「运行时序列化」。对于包含了逻辑调用上下文数据项的执行上下文，让它流动起来可能严重损害性能，因为捕捉执行上下文，需要对所有数据项进行序列化和反序列化。
 
 ```C#
 public static void Main() {
@@ -152,7 +152,7 @@ Name=
 
 ## <a name="27_4">27.4 协作式取消和超时</a>
 
-Microsoft .NET Framework 提供了标准的**取消操作**模式。这个模式是**协作式**的，意味着要取消的操作必须显式支持**取消**。换言之，无论执行操作的代码，还是试图取消操作的代码，还是试图取消操作的代码，都必须使用本节提到的类型。对于长时间运行的计算限制操作，支持取消是一件很“棒”的事情。所以，你应该考虑为自己的计算限制操作添加取消能力。本节将解释具体如何做。但首先解释一下作为标准协作式取消模式一部分的两个 FCL 类型。
+Microsoft .NET Framework 提供了标准的**取消操作**模式。这个模式是**协作式**的，意味着要取消的操作必须显式支持**取消**。换言之，无论执行操作的代码，还是试图取消操作的代码，还是试图取消操作的代码，都必须使用本节提到的类型。对于长时间运行的计算限制操作，支持取消是一件很「棒」的事情。所以，你应该考虑为自己的计算限制操作添加取消能力。本节将解释具体如何做。但首先解释一下作为标准协作式取消模式一部分的两个 FCL 类型。
 
 取消操作首先要创建一个 `System.Threading.CancellationTokenSource` 对象。这个类看起来像下面这样：
 
@@ -223,7 +223,7 @@ internal static class CancellationDemo {
 
 > 注意 要执行一个不允许被取消的操作，可向该操作传递通过调用`CancellationToken`的静态`None`属性而返回的`CancellationToken`。该属性返回一个特殊的`CancellationToken`实例，它不和任何`CancellationTokenSource`对象关联(实例的私有字段为`null`)。由于没有`CancellationTokenSource`，所以没有代码能调用 `Cancel`。一个操作如果查询这个特殊 `CancellationToken` 的`IsCancellationRequested`属性，将总是返回`false`。使用某个特殊`CancellationToken`实例查询`CancellationToken`的`CanBeCanceled`属性，属性会返回`false`。相反，对于通过查询`CancellationTokenSource`对象的`Token`属性而获得的其他所有`CancellationToken`实例，该属性(`CancellationToken`)都会返回`true`。
 
-如果愿意，可调用 `CancellationTokenSource` 的 `Register` 方法登记一个或多个在取消一个 `CancellationTokenSource` 时调用的方法。要向方法传递一个 `Action<Object>` 委托；一个要通过委托传给回到(方法)的状态值；以及一个`Boolean`值(名为`useSynchronizationContext`)，该值指明是否要使用调用线程的 `SynchronizationContext` 来调用委托。如果为 `useSynchronizationContext` 参数传递 `false`，那么调用`Cancel` 的线程会顺序调用已登记的所有方法。为 `useSynchronizationContext` 参数传递 `true`，则回调(方法)会被 send(而不是post<sup>①</sup>)给已捕捉的 `SynchronizationContext` 对象，后者决定由哪个线程调用回调(方法)。`SynchronizationContext` 类的详情将在 28.9 节“应用程序及其线程处理模型”讨论。
+如果愿意，可调用 `CancellationTokenSource` 的 `Register` 方法登记一个或多个在取消一个 `CancellationTokenSource` 时调用的方法。要向方法传递一个 `Action<Object>` 委托；一个要通过委托传给回到(方法)的状态值；以及一个`Boolean`值(名为`useSynchronizationContext`)，该值指明是否要使用调用线程的 `SynchronizationContext` 来调用委托。如果为 `useSynchronizationContext` 参数传递 `false`，那么调用`Cancel` 的线程会顺序调用已登记的所有方法。为 `useSynchronizationContext` 参数传递 `true`，则回调(方法)会被 send(而不是post<sup>①</sup>)给已捕捉的 `SynchronizationContext` 对象，后者决定由哪个线程调用回调(方法)。`SynchronizationContext` 类的详情将在 28.9 节「应用程序及其线程处理模型」讨论。
 
 > ① 简单地说，如果执行 send 操作，要等到在目标线程哪里处理完毕之后才会返回。在此期间，调用线程会被阻塞。这相当于同步调用。而如果执行 post 操作，是指将东西 post 到一个队列中便完事儿，调用线程立即返回，相当于异步调用。————译注
 
@@ -292,7 +292,7 @@ cts2 canceled
 cts1 canceled=False, cts2 canceled=True, linkedCts=True
 ```
 
-在很多情况下，我们需要在过一段时间之后才取消操作。例如，服务器应用程序可能会根据客户端的请求而开始计算。但必须在 2 秒钟之内有响应，无论此时工作是否已经完成。有的时候，与其等待漫长时间获得一个完整的结果，还不如在短时间内报错，或者用部分计算好的结果进行响应。幸好，`CancellationTokenSource` 提供了在指定时间后自动取消的机制。为了利用这个机制，要么用接受延时参数的构造构造一个 `CancellationTokenSource` 对象，要么调用 `CancellationTokenSource` 的 `CancelAfter` 方法。
+在很多情况下，我们需要在过一段时间之后才取消操作。例如，服务器应用程序可能会根据客户端的请求而开始计算。但必须在 2 秒钟之内有响应，无论此时工作是否已经完成。有的时候，与其等待漫长时间获得一个完整的结果，还不如在短时间内报错，或者用部分计算好的结果进行响应。幸好，`CancellationTokenSource` 提供了在指定时间后自动取消的机制。为了利用这个机制，要么用接受延时参数的构造一个 `CancellationTokenSource` 对象，要么调用 `CancellationTokenSource` 的 `CancelAfter` 方法。
 
 ```C#
 public sealed class CancellationTokenSource : IDisposable {
@@ -318,7 +318,7 @@ Task.Run(() => ComputeBoundOp(5));                  // 另一个等价的写法
 
 第二行代码创建 `Task` 对象并立即调用 `Start` 来调度任务。当然，也可先创建好 `Task` 对象再调用 `Start`。例如，可以创建一个 `Task` 对象再调用`Start` 来调度任务。由于创建 `Task` 对象并立即调用 `Start` 是常见的编程模式，所以可以像最后一行代码展示的那样调用 `Task` 的静态 `Run` 方法。
 
-为了创建一个 `Task`，需要调用构造器并传递一个 `Action` 或 `Action<Object>` 委托。这个委托就是你想执行的操作。如果传递的是期待一个`Object` 的方法，还必须向 `Task` 的构造器传递最终要传给操作的实参。调用 `Run` 时可以传递一个 `Action` 或 `Func<TResult>` 委托来指定想要执行的操作。无论调用构造器还是`Run`，都可选择传递一个 `CancellationToken`，它使 `Task` 能在调度前取消(详情参见稍后的 27.5.2 节“取消任务”)。
+为了创建一个 `Task`，需要调用构造器并传递一个 `Action` 或 `Action<Object>` 委托。这个委托就是你想执行的操作。如果传递的是期待一个`Object` 的方法，还必须向 `Task` 的构造器传递最终要传给操作的实参。调用 `Run` 时可以传递一个 `Action` 或 `Func<TResult>` 委托来指定想要执行的操作。无论调用构造器还是`Run`，都可选择传递一个 `CancellationToken`，它使 `Task` 能在调度前取消(详情参见稍后的 27.5.2 节「取消任务」)。
 
 还可选择向构造器传递一些 `TaskCreationOptions` 标志来控制 `Task` 的执行方式。`TaskCreationOptions` 枚举类型定义了一组可按位 OR 的标志。定义如下：
 
@@ -344,7 +344,7 @@ public enum TaskCreationOptions {
 }
 ```
 
-有的标志只是“提议”，`TaskScheduler` 在调度一个 `Task` 时，可能会、也可能不会采纳这些提议。不过，`AttachedToParent`，`DenyChildAttach` 和`HideScheduler` 总是得以采纳，因为它们和 `TaskScheduler` 本身无关。`TaskScheduler` 对象的详情将在 27.5.7 节“任务调度器”讨论。
+有的标志只是「提议」，`TaskScheduler` 在调度一个 `Task` 时，可能会、也可能不会采纳这些提议。不过，`AttachedToParent`，`DenyChildAttach` 和`HideScheduler` 总是得以采纳，因为它们和 `TaskScheduler` 本身无关。`TaskScheduler` 对象的详情将在 27.5.7 节「任务调度器」讨论。
 
 ### 27.5.1 等待任务完成并获取结果 
 
@@ -375,7 +375,7 @@ t.Wait();   // 注意：还有一些重载的版本能接受 timeout/Cancellatio
 Console.WriteLine("The Sum is: " + t.Result);   // 一个 Int32 值
 ```
 
-如果计算限制的任务抛出未处理的异常，异常会被“吞噬”并存储到一个集合中，而线程池线程可以返回到线程池中。调用 `Wait` 方法或者 `Result` 属性时，这些成员会抛出一个 `System.AggregateException` 对象。
+如果计算限制的任务抛出未处理的异常，异常会被「吞噬」并存储到一个集合中，而线程池线程可以返回到线程池中。调用 `Wait` 方法或者 `Result` 属性时，这些成员会抛出一个 `System.AggregateException` 对象。
 
 > 重要提示 线程调用 `Wait` 方法时，系统检查线程要等待的 `Task` 是否已开始执行。如果是，调用 `Wait` 的线程来执行 `Task`。在这种情况下，调用`Wait` 的线程不会阻塞；它会执行 `Task` 并立即返回。好处在于，没有线程会被阻塞，所以减少了对资源的占用(因为不需要创建一个线程来替代被阻塞的线程)，并提升了性能(因为不需要花时间创建线程，也没有上下文切换)。不好的地方在于，假如线程在调用 `Wait` 前已获得了一个线程同步锁，而 `Task` 试图获取同一个锁，就会造成死锁的线程！
 
@@ -408,7 +408,7 @@ private static Int32 Sum(CancellationToken ct, Int32 n) {
 }
 ```
 
-循环(负责执行计算限制的操作)中调用 `CancellationToken` 的 `ThrowIfCancellationRequested` 方法定时检查操作是否已取消。这个方法与`CancellationToken` 的 `IsCancellationRequested` 属性相似(27.4 节“协作式取消和超时”已经讨论过这个属性)。但如果 `CancellationTokenSource` 已经取消，`ThrowIfCancellationRequested` 会抛出一个 `OperationCanceledException`。之所以选择抛出异常，是因为和 `ThreadPool` 的 `QueueUserWorkItem` 方法初始化的工作项不同，任务有办法表示完成，任务甚至能返回一个值。所以，需要采取一种方式将已完成的任务和出错的任务区分开。而让任务抛出异常，就可以知道任务没有一直运行到结束。
+循环(负责执行计算限制的操作)中调用 `CancellationToken` 的 `ThrowIfCancellationRequested` 方法定时检查操作是否已取消。这个方法与`CancellationToken` 的 `IsCancellationRequested` 属性相似(27.4 节「协作式取消和超时」已经讨论过这个属性)。但如果 `CancellationTokenSource` 已经取消，`ThrowIfCancellationRequested` 会抛出一个 `OperationCanceledException`。之所以选择抛出异常，是因为和 `ThreadPool` 的 `QueueUserWorkItem` 方法初始化的工作项不同，任务有办法表示完成，任务甚至能返回一个值。所以，需要采取一种方式将已完成的任务和出错的任务区分开。而让任务抛出异常，就可以知道任务没有一直运行到结束。
 
 现在像下面这样创建 `CancellationTokenSource` 和 `Task` 对象：
 
@@ -433,7 +433,7 @@ catch (AggregateException x) {
 }
 ```
 
-可在创建 `Task` 时将一个 `CancellationToken` 传给构造器(如上例所示)，从而将两者关联。如果 `CancellationToken` 在 `Task` 调度前取消，`Task`会被取消，永远都不执行<sup>①</sup>。但如果 `Task` 已调度(通过调用 `Start` 方法<sup>②</sup>)，那么`Task`的代码只有显示支持取消，其操作才能在执行期间取消。遗憾的是，虽然 `Task` 对象关联了一个 `CancellationToken`，但却没有办法访问它。因此，必须在`Task` 的代码中获得创建`Task` 对象时的同一个`CancellationToken`。为此，最简单的办法就是使用一个 lambda 表达式，将 `CancellationToken` 作为闭包变量“传递”(就像上例那样)。
+可在创建 `Task` 时将一个 `CancellationToken` 传给构造器(如上例所示)，从而将两者关联。如果 `CancellationToken` 在 `Task` 调度前取消，`Task`会被取消，永远都不执行<sup>①</sup>。但如果 `Task` 已调度(通过调用 `Start` 方法<sup>②</sup>)，那么`Task`的代码只有显示支持取消，其操作才能在执行期间取消。遗憾的是，虽然 `Task` 对象关联了一个 `CancellationToken`，但却没有办法访问它。因此，必须在`Task` 的代码中获得创建`Task` 对象时的同一个`CancellationToken`。为此，最简单的办法就是使用一个 lambda 表达式，将 `CancellationToken` 作为闭包变量「传递」(就像上例那样)。
 
 > ① 顺便说一句，如果一个任务还没有开始就试图取消它，会抛出一个 `InvalidOperationException`。
 > ② 调用静态 `Run` 方法会自动创建 `Task`对象并立即调用`Start`。  ———— 译注
@@ -551,7 +551,7 @@ parent.Start();
 
 每个 `Task` 对象都包含代表 `Task` 唯一 ID 的 `Int32` 字段。创建 `Task` 对象时该字段初始化为零。首次查询 `Task` 的只读 `Id` 属性时，属性将一个唯一的 `Int32` 值分配给该字段，并返回该值。任务 ID 从 1 开始，没分配一个 ID 都递增 1。在 Microsoft Visual Studio 调试器中查看 `Task` 对象，会造成调试器显示 `Task` 对象，会造成调试器显示 `Task` 的 ID，从而造成为 `Task` 分配 ID。
 
-该 ID 的意义在于每个 `Task` 都可用唯一值进行标识。事实上，Visual Studio 会在“并行任务” 和 “并行堆栈” 窗口中显示这些任务 ID。但由于不能在自己的代码中分配 ID，所以几乎不可能将 ID 和代码正在做的事情联系起来。运行任务的代码时，可查询 `Task` 的静态 `CurrentId` 属性来返回一个可空`Int32(Int32?)`。调试期间，可在 Visual Studio 的“监视”或“即使”窗口中调用它，获得当前正在调试的代码的 ID。然后，可在“并行任务”或“并行堆栈”窗口中找到自己的任务。如果当前没有任务正在执行，查询 `CurrentId` 属性会返回 `null`。
+该 ID 的意义在于每个 `Task` 都可用唯一值进行标识。事实上，Visual Studio 会在「并行任务」和「并行堆栈」窗口中显示这些任务 ID。但由于不能在自己的代码中分配 ID，所以几乎不可能将 ID 和代码正在做的事情联系起来。运行任务的代码时，可查询 `Task` 的静态 `CurrentId` 属性来返回一个可空`Int32(Int32?)`。调试期间，可在 Visual Studio 的「监视」或「即使」窗口中调用它，获得当前正在调试的代码的 ID。然后，可在「并行任务」或「并行堆栈」窗口中找到自己的任务。如果当前没有任务正在执行，查询 `CurrentId` 属性会返回 `null`。
 
 在一个 `Task` 对象的存在期间，可查询 `Task` 的只读 `Status` 属性了解它在其生存期的什么位置。该属性返回一个 `TaskStatus` 值，定义如下：
 
@@ -644,7 +644,7 @@ parent.Start();
 
 ### 27.5.7 任务调度器
 
-任务基础结构非常灵活，其中 `TaskScheduler` 对象功不可没。`TaskScheduler` 对象负责执行被调度的任务，同时向 Visual Studio 调试器公开任务信息。FCL 提供了两个派生自 `TaskScheduler` 的类型：线程池任务调度器(thread pool task scheduler)，和同步上下文任务调度器(synchronization context task scheduler)。默认情况下，所有应用程序使用的都是线程池任务调度器。这个任务调度器将任务调度给线程池的工作者线程，将在本章后面的 27.9 节“线程池如何管理线程”进行更详细的讨论。可查询 `TaskScheduler` 的静态 `Default` 属性来获得对默认任务调度器的引用。
+任务基础结构非常灵活，其中 `TaskScheduler` 对象功不可没。`TaskScheduler` 对象负责执行被调度的任务，同时向 Visual Studio 调试器公开任务信息。FCL 提供了两个派生自 `TaskScheduler` 的类型：线程池任务调度器(thread pool task scheduler)，和同步上下文任务调度器(synchronization context task scheduler)。默认情况下，所有应用程序使用的都是线程池任务调度器。这个任务调度器将任务调度给线程池的工作者线程，将在本章后面的 27.9 节「线程池如何管理线程」进行更详细的讨论。可查询 `TaskScheduler` 的静态 `Default` 属性来获得对默认任务调度器的引用。
 
 同步上下文任务调度器适合提供了图形用户界面的应用程序，例如 Windows 窗体、Windows Presentation Foundation(WPF)、Silverlight 和 Windows Store 应用程序。它将所有任务都调度给应用程序的 GUI 线程，使所有任务代码都能成功更新 UI 组件(按钮、菜单项等)。该调度器不使用线程池。可执行 `TaskScheduler` 的静态 `FromCurrentSynchronizationContext` 方法来获得对同步上下文任务调度器的引用。
 
@@ -833,7 +833,7 @@ private static Int64 DirectoryBytes(String path, String searchPattern, SearchOpt
 }
 ```
 
-每个任务都通过 `taskLocalTotal` 变量为分配给它的文件维护它自己的总计值。每个任务在完成工作之后，都通过调用 `Interlocked.Add` 方法(参见第 29 章“基元线程同步构造”)，以一种线程安全的方式更新总的总计值(master total)。由于每个任务都有自己的总计值，所以在一个工作项处理期间，无需进行线程同步。由于线程同步会造成性能的损失，所以不需要线程同步是好事。只有在每个任务返回之后，`masterTotal` 才需要以一种线程安全的方式更新 `masterTotal` 变量。所以，因为调用 `Interlocked.Add` 而造成的性能损失每个任务只发生一次，而不会每个工作项都发生。
+每个任务都通过 `taskLocalTotal` 变量为分配给它的文件维护它自己的总计值。每个任务在完成工作之后，都通过调用 `Interlocked.Add` 方法(参见第 29 章「基元线程同步构造」)，以一种线程安全的方式更新总的总计值(master total)。由于每个任务都有自己的总计值，所以在一个工作项处理期间，无需进行线程同步。由于线程同步会造成性能的损失，所以不需要线程同步是好事。只有在每个任务返回之后，`masterTotal` 才需要以一种线程安全的方式更新 `masterTotal` 变量。所以，因为调用 `Interlocked.Add` 而造成的性能损失每个任务只发生一次，而不会每个工作项都发生。
 
 注意，我们向主体委托传递了一个 `ParallelLoopState` 对象，它的定义如下：
 
@@ -967,7 +967,7 @@ public enum ParallelMergeOptions {
 }
 ```
 
-这些选项使你能在某种程度上平衡执行速度和内存消耗。`NotBuffered` 最省内存，但处理速度慢一些。`FullyBuffered` 消费较多的内存，`AutoBuffered` 介于 `NotBuffered` 和 `FullyBuffered` 之间。说真的，要想知道应该为一个给定的查询选择哪个并行合并选项，最好的办法就是亲自试验所有选项，并对比其性能。也可以“无脑”地接受默认值，它对于许多查询来说都工作得非常好。请参见以下博客文章，进一步了解 PLIQ 如何在 CPU 内核之间分配工作：
+这些选项使你能在某种程度上平衡执行速度和内存消耗。`NotBuffered` 最省内存，但处理速度慢一些。`FullyBuffered` 消费较多的内存，`AutoBuffered` 介于 `NotBuffered` 和 `FullyBuffered` 之间。说真的，要想知道应该为一个给定的查询选择哪个并行合并选项，最好的办法就是亲自试验所有选项，并对比其性能。也可以「无脑」地接受默认值，它对于许多查询来说都工作得非常好。请参见以下博客文章，进一步了解 PLIQ 如何在 CPU 内核之间分配工作：
 
 * *[http://blogs.msdn.com/pfxteam/archive/2009/05/28/9648672.aspx](http://blogs.msdn.com/pfxteam/archive/2009/05/28/9648672.aspx)*
 
@@ -1012,7 +1012,7 @@ public sealed class Timer : MarshalByRefObject, IDisposable {
 }
 ```
 
-> 重要提示 `Timer` 对象被垃圾回收时，它的终结代码告诉线程池取消计时器，使它不再触发。所以，使用 `Timer` 对象时，要确定有一个变量在保持 `Timer` 对象的存活，否则对你的回调方法的调用就会停止。21.1.3 节“垃圾回收与调试”对此进行了详细讨论和演示。
+> 重要提示 `Timer` 对象被垃圾回收时，它的终结代码告诉线程池取消计时器，使它不再触发。所以，使用 `Timer` 对象时，要确定有一个变量在保持 `Timer` 对象的存活，否则对你的回调方法的调用就会停止。21.1.3 节「垃圾回收与调试」对此进行了详细讨论和演示。
 
 以下代码演示了如何让一个线程池线程立即调用回调方法，以后每 2 秒调用一次：
 
@@ -1120,6 +1120,6 @@ CLR 允许开发人员设置线程池要创建的最大线程数。但实践证�
 
 工作者线程准备好处理工作项时，它总是先检查本地队列来查找一个 `Task`。存在一个 `Task`，工作者线程就从本地队列移除 `Task` 并处理工作项。要注意的是，工作者线程采用后入先出(LIFO)算法将任务从本地队列取出。由于工作者线程是唯一允许访问它自己的本地队列头的线程，所以无需同步锁，而且在队列中添加和删除 `Task` 的速度非常快。这个行为的副作用是 `Task` 按照和进入队列时相反的顺序执行。
 
-如果工作者线程发现它的本地队列变空了，会尝试从另一个工作者线程的本地队列“偷”一个 `Task`。 这个 `Task` 是从本地队列的尾部“偷”走的，并要求获取一个线程同步锁，这对性能有少许影响。当然，希望这种“偷盗”行为很少发生，从而很少需要获取锁。如果所有本地队列都变空，那么工作者线程会使用 FIFO 算法，从全局队列提取一个工作项(取得它的锁)。如果全局队列也为空，工作者线程会进入睡眠状态，等待事情的发生。如果睡眠了太长时间，它会自己醒来，并销毁自身，允许系统回收线程使用的资源(内核对象、栈、TEB 等)。
+如果工作者线程发现它的本地队列变空了，会尝试从另一个工作者线程的本地队列「偷」一个 `Task`。 这个 `Task` 是从本地队列的尾部「偷」走的，并要求获取一个线程同步锁，这对性能有少许影响。当然，希望这种「偷盗」行为很少发生，从而很少需要获取锁。如果所有本地队列都变空，那么工作者线程会使用 FIFO 算法，从全局队列提取一个工作项(取得它的锁)。如果全局队列也为空，工作者线程会进入睡眠状态，等待事情的发生。如果睡眠了太长时间，它会自己醒来，并销毁自身，允许系统回收线程使用的资源(内核对象、栈、TEB 等)。
 
 线程池会快速创建工作者线程，使工作者线程的数量等于传给 `ThreadPool` 的 `SetMinThreads` 方法的值。如果从不调用这个方法(也建议你永远不调用这个方法)，那么默认值等于你的进程允许使用的 CPU 数量，这是由进程的 affinity mask(关联掩码)决定的。通常，你的进程允许使用机器上的所有 CPU，所以线程池创建的工作者线程数量很快就会达到机器的 CPU 数。创建了这么多(CPU 数量)的线程后，线程池会监视工作项的完成速度。如果工作项完成的时间太长(具体多长没有正式公布)，线程池会创建更多的工作者线程。如果工作项的完成速度开始变快，工作者线程会被销毁。

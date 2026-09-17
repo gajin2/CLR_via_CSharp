@@ -26,7 +26,7 @@
 
 * 将 `Serializable` 特性应用于类型，告诉序列化格式化器<sup>①</sup>一个实例的字段可以序列化和反序列化。
 
-> ① “格式化器”是本书的译法，文档翻译成“格式化程序”。格式化器是实现了 `System.Runtime.Serialization.IFormatter` 接口的类型，它知道如何序列化和反序列化一个对象图。————译注 
+> ① 「格式化器」是本书的译法，文档翻译成「格式化程序」。格式化器是实现了 `System.Runtime.Serialization.IFormatter` 接口的类型，它知道如何序列化和反序列化一个对象图。————译注 
 
 * 将 `AssemblyVersion` 特性应用于程序集，设置程序集的版本号。
 
@@ -98,17 +98,17 @@ internal sealed class SomeType<[typevar: SomeAttr] T> {     // 应用于泛型�
 }
 ```
 
-前面介绍了如何应用定制特性，现在看看特性到底是什么。定制特性其实是一个类型的实例。为了符合“公共语言规范”(CLS)的要求，定制特性类必须直接或间接从公共抽象类 `System.Attribute`派生。C# 只允许符合 CLS 规范的特性。查看文档会发现定义了以下类(参见前面的例子)；`StructLayoutAttribute`，`MarshalAsAttribute`，`DllImportAttribute`，`InAttribute` 和 `OutAttribute`。所有这些类碰巧都在`System.Runtime.InteropServices`命名空间中定义。但特性类可以在任何命名空间中定义。进一步查看，会发现所有这些类都从`System.Attribute`派生，所有符合 CLS 规范的特性类都肯定从这个类派生类。
+前面介绍了如何应用定制特性，现在看看特性到底是什么。定制特性其实是一个类型的实例。为了符合「公共语言规范」(CLS)的要求，定制特性类必须直接或间接从公共抽象类 `System.Attribute`派生。C# 只允许符合 CLS 规范的特性。查看文档会发现定义了以下类(参见前面的例子)；`StructLayoutAttribute`，`MarshalAsAttribute`，`DllImportAttribute`，`InAttribute` 和 `OutAttribute`。所有这些类碰巧都在`System.Runtime.InteropServices`命名空间中定义。但特性类可以在任何命名空间中定义。进一步查看，会发现所有这些类都从`System.Attribute`派生，所有符合 CLS 规范的特性类都肯定从这个类派生类。
 
-> 注意 将特性应用于源代码中的目标元素时，C#编译器允许省略 `Attribute` 后缀以减少打字量，并提升源代码的可读性。本章许多示例代码都利用了 C# 提供的这一便利。例如，许多源代码用的都是`[DllImport(...)]`，而不是`[DllImportAttribute(...)]`。
+> 注意 将特性应用于源代码中的目标元素时，C# 编译器允许省略 `Attribute` 后缀以减少打字量，并提升源代码的可读性。本章许多示例代码都利用了 C# 提供的这一便利。例如，许多源代码用的都是`[DllImport(...)]`，而不是`[DllImportAttribute(...)]`。
 
 如前所述，特性是类的实例。类必须有公共构造器才能创建它的实例。所以，将特性应用于目标元素时，语法类似于调用类的某个实例构造器。除此之外，语言可能支持一些特殊的语法，允许设置与特性类关联的公共字段或属性。前面的例子将`DllImport` 特性应用于`GetVersionEx`方法：
 
 `[DllImport("Kernel32", CharSet = CharSet.Auto, SetLastError = true)]`
 
-这一行代码的语法表面上看很奇怪，因为调用构造器时永远不会使用这样的语法。查阅`DllImportAttribute` 类的文档，会发现它的构造器要求接受一个 `String` 参数。在这个例子中。“`Kernel32`”将传给这个参数。构造器的参数称为**定位参数**(positional parameter)，而且是强制性的：也就是说，应用特性时必须指定参数。
+这一行代码的语法表面上看很奇怪，因为调用构造器时永远不会使用这样的语法。查阅`DllImportAttribute` 类的文档，会发现它的构造器要求接受一个 `String` 参数。在这个例子中。「`Kernel32`」将传给这个参数。构造器的参数称为**定位参数**(positional parameter)，而且是强制性的：也就是说，应用特性时必须指定参数。
 
-那么，另外两个“参数”是什么呢？这种特殊的语法允许在构造好 `DllImportAttribute` 对象后设置对象的任何公共字段或属性。在这个例子中，将“`Kernel32`”传给构造器并构造好 `DllImportAttribute` 对象之后，对象的公共实例字段 `CharSet` 和 `SetLastError` 分别设为`CharSet.Auto`和`true`。用于设置字段或属性的“参数”称为**命名参数**(named parameter)。这种参数是可选的，因为在应用特性的实例时不一定要指定参数。稍后会解释是什么导致了实际地构造`DllImportAttribute`类的实例。
+那么，另外两个「参数」是什么呢？这种特殊的语法允许在构造好 `DllImportAttribute` 对象后设置对象的任何公共字段或属性。在这个例子中，将「`Kernel32`」传给构造器并构造好 `DllImportAttribute` 对象之后，对象的公共实例字段 `CharSet` 和 `SetLastError` 分别设为`CharSet.Auto`和`true`。用于设置字段或属性的「参数」称为**命名参数**(named parameter)。这种参数是可选的，因为在应用特性的实例时不一定要指定参数。稍后会解释是什么导致了实际地构造`DllImportAttribute`类的实例。
 
 还要注意，可将多个特性应用于一个目标元素。例如，在本章的第一个示例程序中，`GetVersionEx` 方法的 `ver` 参数同时应用了 `In` 和 `Out` 这两个特性。将多个特性应用于单个目标元素时，注意特性的顺序无关紧要。另外，在 C# 中，既可将每个特性都封闭到一对方括号中，也可在一对方括号中封闭多个以逗号分隔的特性。如果特性类的构造器不获取参数，那么圆括号可以省略。最后，就像前面说到的那样，`Attribute`后缀也是可选的。下面代码行具有相同的行为，它们演示了应用多个特性时所有可能的方式：
 
@@ -236,13 +236,13 @@ internal enum Color {
 }
 ```
 
-编译器会报告以下错误:
+编译器会报告以下错误：
 
 `error CS0579: 重复的“Flags”特性。`
 
 但少数几个特性确实有必要多次应用于同一个目标。FCL 特性类 `ConditionalAttribute` 允许将它的多个实例应用于同一个目标元素。不将`AllowMultiple` 明确设为 `true`，特性就只能向选定的目标元素应用一次。
 
-`AttributeUsageAttribute` 的另一个属性是 `Inherited`,它指出特性在应用于基类时,是否同时应用于派生类和重写的方法。以下代码演示了特性的继承：
+`AttributeUsageAttribute` 的另一个属性是 `Inherited`，它指出特性在应用于基类时，是否同时应用于派生类和重写的方法。以下代码演示了特性的继承：
 
 ```C#
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true)]
@@ -262,13 +262,13 @@ internal class DerivedType : BaseType {
 
 在上述代码中，`DerivedType` 及其 `DoSomething` 方法都被视为 `Tasty`，因为 `TastyAttribute` 类被标记为可继承。但 `DerivedType` 不可序列化，因为 FCL 的 `SerializableAttribute` 类被标记为不可继承。
 
-注意，.NET Framework 只认为类、方法、属性、事件、字段、方法返回值和参数等目标元素是可继承的。所以，定义特性类型时，只有在该特性应用于上述某个目标的前提下，才应该将 `Inherited` 设为 `true`。注意，可继承特性不会造成在托管模块中为派生类型生成额外的元数据。18.4 节 “检测定制特性” 将进一步讨论这方面的问题。
+注意，.NET Framework 只认为类、方法、属性、事件、字段、方法返回值和参数等目标元素是可继承的。所以，定义特性类型时，只有在该特性应用于上述某个目标的前提下，才应该将 `Inherited` 设为 `true`。注意，可继承特性不会造成在托管模块中为派生类型生成额外的元数据。18.4 节「检测定制特性」将进一步讨论这方面的问题。
 
 > 注意 定义自己的特性类时，如果忘记向自己的类应用 `AttributeUsage` 特性，编译器和 CLR 将假定该特性能应用于所有目标元素，向每个目标元素都只能应用一次，而且可继承。这些假定模仿了 `AttributeUsageAttribute` 类中的默认字段值。
 
 ## <a name="18_3">18.3 特性构造器和字段/属性数据类型</a>
 
-定制特性类可定义构造器来获取参数.开发人员在应用特性类的实例时必须指定这些参数.还可在类中定义非静态公共字段和属性,使开发人员能为特性类的实例选择恰当的设置.
+定制特性类可定义构造器来获取参数。开发人员在应用特性类的实例时必须指定这些参数。还可在类中定义非静态公共字段和属性，使开发人员能为特性类的实例选择恰当的设置。
 
 定义特性类的实例构造器、字段和属性时，可供选择的数据类型并不多。具体地说，只允许 `Boolean`，`Char`，`Byte`，`SByte`，`Int16`，`UInt16`，`Int32`，`UInt32`，`Int64`，`UInt64`，`Single`，`Double`，`String`，`Type`，`Object`或枚举类型。此外，可使用上述任意类型的一维 0 基数组。但应尽量避免使用数组，因为对于定制特性，如果它的构造器要获取数组作为参数，就会失去与 CLS 的相容性。
 
@@ -295,13 +295,13 @@ internal sealed class SomeType {
 
 逻辑上，当编译器检测到向目标元素应用了定制特性时，会调用特性类的构造器，向它传递任何指定的参数，从而构造特性类的实例。然后，编译器采用增强型构造器语法所指定的值，对任何公共字段和属性进行初始化。构造并初始化好定制特性类的对象之后，编译器将它的状态序列化到目标元素的元数据表记录项中。
 
-> 重要提示 为方便理解，可以这样想象定制特性：它是类的实例，被序列化成驻留在元数据中的字节流。运行时可对元数据中的字节进行反序列化，从而构造出类的实例。实际发生的事情是：编译器在元数据中生成创建特性类的实例所需的信息。每个构造器参数都会 1 字节的类型 ID，后跟具体的值。对构造器的参数进行“序列化”时，编译器先写入字段/属性名称，再跟上 1 字节的类型 ID，最后是具体的值。如果是数组，则会先保存数组元素的个数，再跟上每个单独的元素。
+> 重要提示 为方便理解，可以这样想象定制特性：它是类的实例，被序列化成驻留在元数据中的字节流。运行时可对元数据中的字节进行反序列化，从而构造出类的实例。实际发生的事情是：编译器在元数据中生成创建特性类的实例所需的信息。每个构造器参数都会 1 字节的类型 ID，后跟具体的值。对构造器的参数进行「序列化」时，编译器先写入字段/属性名称，再跟上 1 字节的类型 ID，最后是具体的值。如果是数组，则会先保存数组元素的个数，再跟上每个单独的元素。
 
 ## <a name="18_4">18.4 检测定制特性</a>
 
 仅仅定义特性类没有用。确实可以定义自己想要的所有特性类，并应用自己想要的所有实例。但这样除了在程序集中生成额外的元数据，没有其他任何意义。应用程序代码的行为不会有任何改变。
 
-第 15 章 “枚举类型和位标志” 描述了如何将 `Flags` 特性应用于枚举类型，从而改变 `System.Enum` 的 `ToString` 和 `Format` 方法的行为。方法的行为之所以改变，是因为它们会在运行时检查自己操作的枚举类型是否关联了 `Flags` 特性元数据。代码利用一种称为**反射**的技术检测特性的存在。这里只是简单地演示一下反射。第 23 章 “程序集加载和反射”会完整地讨论这种技术。
+第 15 章「枚举类型和位标志」描述了如何将 `Flags` 特性应用于枚举类型，从而改变 `System.Enum` 的 `ToString` 和 `Format` 方法的行为。方法的行为之所以改变，是因为它们会在运行时检查自己操作的枚举类型是否关联了 `Flags` 特性元数据。代码利用一种称为**反射**的技术检测特性的存在。这里只是简单地演示一下反射。第 23 章「程序集加载和反射」会完整地讨论这种技术。
 
 假定你是 Microsoft 的员工，负责实现 `Enum` 的 `ToString` 方法，你会像下面这样实现它：
 
@@ -576,9 +576,9 @@ Program types can NOT write checks.
 
 本节将讨论如何利用另一种技术检测应用于元数据记录项的特性。在某些安全性要求严格的场合，这个技术能保证不执行从 `Attribute` 的 `GetCustomAttribute` 或者 `GetCustomAttributes` 方法时，这些方法会在内部调用特性类的构造器，而且可能调用属性的 `set` 访问器。此外，首次访问类型会造成 CLR 调用类型的类型构造器(如果有的话)。在构造器、`set`访问器方法以及类型构造器中，可能包含每次查找特性都要执行的代码。这就相当于允许未知代码在 `AppDomain` 中运行，所以存在安全隐患。
 
-可用 `System.Reflection.CustomAttributeData` 类在查找特性的同时禁止执行特性类中的代码。该类定义了静态方法 `GetCustomAttributes` 来获取与目标关联的特性。方法有 4 个重载版本，分别获取一个 `Assembly`，`Module`，`ParameterInfo` 和 `MemberInfo`。 该类在 `System.Reflection` 命名空间(将在第 23 章“程序集加载和反射” 讨论)中定义。通过，先用 `Assembly` 的静态方法 `ReflectionOnlyLoad`(也在第 23 章讨论)加载程序集，再用`CustomAttributeData`类分析这个程序集的元数据中的特性。简单地说，`ReflectionOnlyLoad` 以特殊方式加载程序集，期间会禁止 CLR 执行程序集中的任何代码；其中包括类型构造器。
+可用 `System.Reflection.CustomAttributeData` 类在查找特性的同时禁止执行特性类中的代码。该类定义了静态方法 `GetCustomAttributes` 来获取与目标关联的特性。方法有 4 个重载版本，分别获取一个 `Assembly`，`Module`，`ParameterInfo` 和 `MemberInfo`。 该类在 `System.Reflection` 命名空间(将在第 23 章「程序集加载和反射」讨论)中定义。通过，先用 `Assembly` 的静态方法 `ReflectionOnlyLoad`(也在第 23 章讨论)加载程序集，再用`CustomAttributeData`类分析这个程序集的元数据中的特性。简单地说，`ReflectionOnlyLoad` 以特殊方式加载程序集，期间会禁止 CLR 执行程序集中的任何代码；其中包括类型构造器。
 
-`CustomAttributeData` 的 `GetCustomAttributes` 方法是一个工厂(factory)方法。也就是说，调用它会返回一个`IList<CustomAttributeData>` 类型的对象，其中包含了由 `CustomAttributeData`对象构成的集合。集合中的每个元素都是应用于指定目标的一个定制特性。可查询每个`CustomAttributeData` 对象的只读属性，判断特性对象如何构造和初始化。具体地说，`Constructor` 属性指出构造器方法将如何调用。`ConstructorArguments` 属性以一个 `IList<CustomAttributeTypedArgument>` 实例的形式返回将传给这个构造器的实参。而`NamedArguments`属性以一个 `IList<CustomAttributeNamedArgument>` 实例的形式，返回将设置的字段/属性。注意，之所以说“将”，是因为不会实际地调用构造器和 `set` 访问器方法。禁止执行特性类的任何方法增强了安全性。
+`CustomAttributeData` 的 `GetCustomAttributes` 方法是一个工厂(factory)方法。也就是说，调用它会返回一个`IList<CustomAttributeData>` 类型的对象，其中包含了由 `CustomAttributeData`对象构成的集合。集合中的每个元素都是应用于指定目标的一个定制特性。可查询每个`CustomAttributeData` 对象的只读属性，判断特性对象如何构造和初始化。具体地说，`Constructor` 属性指出构造器方法将如何调用。`ConstructorArguments` 属性以一个 `IList<CustomAttributeTypedArgument>` 实例的形式返回将传给这个构造器的实参。而`NamedArguments`属性以一个 `IList<CustomAttributeNamedArgument>` 实例的形式，返回将设置的字段/属性。注意，之所以说「将」，是因为不会实际地调用构造器和 `set` 访问器方法。禁止执行特性类的任何方法增强了安全性。
 
 下面是之前例子的修改版本，它利用 `CustomAttributeData` 类来安全地获取应用于各个目标的特性：
 

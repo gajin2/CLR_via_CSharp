@@ -14,15 +14,15 @@
 
 **序列化**是将对象或对象图<sup>①</sup>转换成字节流的过程。**反序列化**是将字节流转换回对象图的过程。在对象和字节流之间转换是很有用的机制。下面是一些例子。
 
-> ① 本书将 object graph 翻译成“对象图”，对象图是一个抽象的概念，代表的是对象系统在特定时间点的一个视图。另一个常用的术语 object diagram 则是指总体 object graph 的一个子集。普通的对象模型(比如 UML 类图)描述的是对象之间的关系，而对象图侧重于它们的实例在特定时间点的状态。在面向对象应用程序中，相互关联的对象构成了一个复杂的网络。一个对象可能拥有或包含另一个对象，或者容纳了对另一个对象的引用。这样一来，不同的对象便相互链接起来了。这个对象网络便是对象图。它是一种比较抽象的结构，可在讨论应用程序的状态时使用它。注意，在 .NET Framework SDK 中文文档中，由对象相互连接而构成的对象图被称为“连接对象图形”。 ———— 译注
+> ① 本书将 object graph 翻译成「对象图」，对象图是一个抽象的概念，代表的是对象系统在特定时间点的一个视图。另一个常用的术语 object diagram 则是指总体 object graph 的一个子集。普通的对象模型(比如 UML 类图)描述的是对象之间的关系，而对象图侧重于它们的实例在特定时间点的状态。在面向对象应用程序中，相互关联的对象构成了一个复杂的网络。一个对象可能拥有或包含另一个对象，或者容纳了对另一个对象的引用。这样一来，不同的对象便相互链接起来了。这个对象网络便是对象图。它是一种比较抽象的结构，可在讨论应用程序的状态时使用它。注意，在 .NET Framework SDK 中文文档中，由对象相互连接而构成的对象图被称为「连接对象图形」。 ———— 译注
 
 * 应用程序的状态(对象图)可轻松保存到磁盘文件或数据库中，并在应用层序下次运行时恢复。ASP.NET 就是利用序列化和反序列化来保存和还原会话状态的。
 
 * 一组对象可轻松复制到系统的剪贴板，再粘贴回同一个或另一个应用程序，事实上， Windows 窗体和 Windows Presentation Foundation(WPF) 就利用了这个功能。
 
-* 一组对象可克隆并放到一边作为“备份”；与此同时，用户操纵一组“主”对象。
+* 一组对象可克隆并放到一边作为「备份」；与此同时，用户操纵一组「主」对象。
 
-* 一组对象可轻松地通过网络发送给另一台机器上运行的进程。Microsoft .NET Framework 的 Remoting(远程处理)架构会对按值封送(marshaled by value)的对象进行序列化和反序列化。这个技术还可跨 AppDomain 边界发送对象，具体如第 22 章“CLR 寄宿和 AppDomain”所述。
+* 一组对象可轻松地通过网络发送给另一台机器上运行的进程。Microsoft .NET Framework 的 Remoting(远程处理)架构会对按值封送(marshaled by value)的对象进行序列化和反序列化。这个技术还可跨 AppDomain 边界发送对象，具体如第 22 章「CLR 寄宿和 AppDomain」所述。
 
 除了上述应用，一旦将对象序列化成内存中的字节流，就可方便地以一些更有用的方式处理数据，比如进行加密和压缩。
 
@@ -32,7 +32,7 @@
 
 让人高兴的是，.NET Framework 内建了出色的序列化和反序列化的支持。上述所有难题都迎刃而解，而且.NET Framework 是在后台悄悄帮你解决的。开发者现在只需负责序列化之前和反序列化之后的对象处理，中间过程由 .NET Framework 负责。
 
-本章解释了 .NET Framework 如何公开它的序列化和序列化服务。对于几乎所有数据类型，这些服务的默认行为已经足够。也就是说，几乎不需要做任何工作就可以使自己打的类型“可序列化”。但对于少量类型，序列化服务的默认行为是不够的。幸好，序列化服务的扩展性极佳，本章将解释如何利用这些扩展性机制，在序列化或反序列化对象时采取一些相当强大的操作。例如，本章演示了如何将对象的“版本 1”序列化到磁盘文件，一年后把它反序列化成“版本2”的对象。
+本章解释了 .NET Framework 如何公开它的序列化和序列化服务。对于几乎所有数据类型，这些服务的默认行为已经足够。也就是说，几乎不需要做任何工作就可以使自己打的类型「可序列化」。但对于少量类型，序列化服务的默认行为是不够的。幸好，序列化服务的扩展性极佳，本章将解释如何利用这些扩展性机制，在序列化或反序列化对象时采取一些相当强大的操作。例如，本章演示了如何将对象的「版本 1」序列化到磁盘文件，一年后把它反序列化成「版本2」的对象。
 
 > 注意 本章重点在于 CLR 的运行时序列化技术。这种技术对 CLR 数据类型有很深刻的理解，能将对象的所有公共、受保护、内部甚至私有字段序列化到压缩的二进制流中，从而获得很好的性能。要把 CLR 数据类型序列化成 XML 流，请参见 `System.Runtime.Serialization.NetDataContractSerializer` 类。.NET Framework 还提供了其他序列化技术，它们主要是为 CLR 数据类型和非 CLR 数据类型之间的互操作而设计的。这些序列化技术用的是 `System.Xml.Serialization.XmlSerializer` 类和 `System.Runtime.Serialization.DataContractSerializer`类。
 
@@ -175,7 +175,7 @@ private static void RestoreApplicationState(Stream stream) {
 } 
 ```
 
-最后一个主意事项与程序集有关。序列化对象时，类型的全名和类型定义程序集的全名会被写入流。`BinaryFormatter` 默认输出程序集的完整标识，其中包括程序集的文件名(无扩展名)、版本号、语言文化以及公钥信息。反序列化对象时，格式化器首先获取程序集标识信息。并通过调用 `System.Refleciton.Assembly` 的 `Load`方法(参见 23.1 节“程序集加载”)，确保程序集已加载到正在执行的 AppDomain 中。
+最后一个主意事项与程序集有关。序列化对象时，类型的全名和类型定义程序集的全名会被写入流。`BinaryFormatter` 默认输出程序集的完整标识，其中包括程序集的文件名(无扩展名)、版本号、语言文化以及公钥信息。反序列化对象时，格式化器首先获取程序集标识信息。并通过调用 `System.Refleciton.Assembly` 的 `Load`方法(参见 23.1 节「程序集加载」)，确保程序集已加载到正在执行的 AppDomain 中。
 
 程序集加载好之后，格式化器在程序集中查找与要反序列化的对象匹配的类型。找不到匹配类型就抛出异常，不再对更多的对象进行反序列化。找到匹配的类型，就创建类型的实例，并用流中包含的值对其字段进行初始化。如果类型中的字段与流中读取的字段名不完全匹配，就抛出 `SerializationException` 异常，不再对更多的对象进行反序列化。本章以后会讨论一些高级机制，它们允许你覆盖某些行为。
 
@@ -234,13 +234,13 @@ internal class Employee : Person { ... }
 
 > 注意 一般建议将你定义的大多数类型都设置成可序列化。毕竟，这样能为类型的用户提供很大的灵活性。但必须注意的是，序列化会读取对象的所有字段，不管这些字段声明为 `public`，`protected`，`internal` 还是 `private`。如果类型的实例要包含敏感或安全数据(比如密码)，或者数据在转移之后便没有含义或者没有值，就不应使类型变得可序列化。
 
-> 如果使用的类型不是为序列化而设计的，而且手上没有类型的源代码，无法从源头添加序列化支持，也不必气馁。在本章最后的 24.9 节“反序列化对象时重写程序集和/或类型”中，我会解释如何使任何不可序列化的类型变得可序列化。
+> 如果使用的类型不是为序列化而设计的，而且手上没有类型的源代码，无法从源头添加序列化支持，也不必气馁。在本章最后的 24.9 节「反序列化对象时重写程序集和/或类型」中，我会解释如何使任何不可序列化的类型变得可序列化。
 
 ## <a name="24_3">24.3 控制序列化和反序列化</a>
 
 将 `SerializableAttribute` 定制特性应用于类型，所有实例字段(`public`，`private` 和 `protected`等)都会被序列化<sup>①</sup>。但类型可能定义了一些不应序列化的实例字段。一般有两个原因造成我们不想序列化部分实例字段。
 
-> ① 在标记了 `[Serializable]` 特性的类型中，不要用 C#的“自动实现的属性”功能来定义属性。这是由于字段名是由编译器自动生成的，而生成的名称每次重新编译代码时都不同。这会阻止类型被反序列化。详情参见 10.1.1 节“自动实现的属性”。
+> ① 在标记了 `[Serializable]` 特性的类型中，不要用 C# 的「自动实现的属性」功能来定义属性。这是由于字段名是由编译器自动生成的，而生成的名称每次重新编译代码时都不同。这会阻止类型被反序列化。详情参见 10.1.1 节「自动实现的属性」。
 
 * 字段含有反序列化后变得无效的信息。例如，假定对象包含 Windows 内核对象(如文件、进程、线程、互斥体、事件、信号量等)的句柄，那么在反序列化到另一个进程或另一台机器之后，就会失去意义。因为 Windows 内核对象是跟进程相关的值。
 
@@ -335,13 +335,13 @@ public class MyType {
 }
 ```
 
-使用这 4 个属性中的任何一个时，你定义的方法必须获取一个 `StreamingContext` 参数(在本章后面的 24.6 节“流上下文“中讨论)并返回 `void`。方法名可以是你希望的任何名称。另外，应将方法声明为 `private`，以免它被普通的代码调用；格式化器运行时有充足的安全权限，所以能调用私有方法。
+使用这 4 个属性中的任何一个时，你定义的方法必须获取一个 `StreamingContext` 参数(在本章后面的 24.6 节「流上下文」中讨论)并返回 `void`。方法名可以是你希望的任何名称。另外，应将方法声明为 `private`，以免它被普通的代码调用；格式化器运行时有充足的安全权限，所以能调用私有方法。
 
 > 注意 序列化一组对象时，格式化器首先调用对象的标记了 `OnSerializing` 特性的所有方法。接着，它序列化对象的所有字段。最后，调用对象的标记了 `OnSerialized` 特性的所有方法。类似地，反序列化一组对象时，格式化器首先调用对象的标记了 `OnDeserializing` 特性的所有方法。然后，它反序列化对象的所有字段。最后，它调用对象的标记了 `OnDeserialized` 特性的所有方法。
 
 > 还要注意，在反序列化期间，当格式化器看到类型提供的一个方法标记了 `OnDeserialized` 特性时，格式化器会将这个对象的引用添加到一个内部列表中。所有对象都反序列化之后，格式化器反向遍历列表，调用每个对象的 `OnDeserialized` 方法，调用这个方法后，所有可序列化的字段都会被正确设置，可访问这些字段来执行任何必要的、进一步的工作，从而将对象完整地反序列化。之所以要以相反的顺序调用这些方法，因为这样才能使内层对象先于外层对象完成反序列化。
 
-> 例如，假定一个集合对象(比如 `Hashtable` 或 `Dictionary`)内部用一个哈希表维护它的数据项列表。集合对象类型可实现一个标记了 `OnDeserialized` 特性的方法。即使集合对象先反序列化(先于它包含的数据项)，它的 `OnDeserialized` 方法也会最后调用(在调用完它的数据项的所有 `OnDeserialized` 方法之后)。这样一来，所有数据项在反序列化后，它们的所有字段都能得到正确的初始化，以便计算出一个好的哈希码值。然后，集合对象创建它的内部哈希桶，并利用数据项的哈希码将数据项放到桶中。本章稍后的 24.5 节”控制序列化/反序列化的数据“会提供一个例子，它展示了 `Dictionary` 类如何利用这个技术。
+> 例如，假定一个集合对象(比如 `Hashtable` 或 `Dictionary`)内部用一个哈希表维护它的数据项列表。集合对象类型可实现一个标记了 `OnDeserialized` 特性的方法。即使集合对象先反序列化(先于它包含的数据项)，它的 `OnDeserialized` 方法也会最后调用(在调用完它的数据项的所有 `OnDeserialized` 方法之后)。这样一来，所有数据项在反序列化后，它们的所有字段都能得到正确的初始化，以便计算出一个好的哈希码值。然后，集合对象创建它的内部哈希桶，并利用数据项的哈希码将数据项放到桶中。本章稍后的 24.5 节「控制序列化/反序列化的数据」会提供一个例子，它展示了 `Dictionary` 类如何利用这个技术。
 
 如果序列化类型的实例，在类型中添加新字段，然后试图反序列化不包含新字段的对象，格式化器会抛出 `SerializationException` 异常，并显示一条消息告诉你流中要反序列化的数据包含错误的成员数目。这非常不利于版本控制，因为我们经常都要在类型的新版本中添加新字段。幸好，这时可以利用 `System.Runtime.Serialization.OptionalFieldAttribute` 特性。
 
@@ -404,7 +404,7 @@ public interface ISerializable {
 
 构造 `SerializationInfo` 对象时，格式化器要传递两个参数：`Type` 和 `System.Runtime.Serialization.IFormatterConverter`。`Type`参数标识要序列化的对象。唯一性地标识一个类型需要两个部分的信息：类型的字符串名称及其程序集标识(包括程序集名、版本、语言文化和公钥)。构造好的 `SerializationInfo` 对象包含类型的全名(通过在内部查询 `Type` 的 `FullName`属性)，这个字符串会存储到一个私有字段中，如果你想获取类型的全名，可查询 `SerializationInfo` 的 `FullTypeName` 属性。类似地，构造器获取类型的定义程序集(通过在内部查询 `Type` 的 `Module` 属性，再查询 `Module` 的 `Assembly` 属性，再查询 `Assembly` 的 `FullName`属性)，这样个字符串会存储在一个私有字段中。如果你想获取程序集的标识，可查询 `SerializationInfo` 的 `AssemblyName` 属性。
 
-> 注意 虽然可以设置一个 `SerializationInfo` 的 `FullTypeName` 和 `AssemblyName` 属性，但不建议这样做。如果想要更改被序列化的类型，建议调用 `SerializationInfo` 的 `SetType` 方法，传递对目标 `Type` 对象的引用。调用 `SetType` 可确保类型的全名和定义程序集被正确设置。本章后面的 24.7 节“类型序列化为不同类型以及对象反序列化为不同对象”将展示调用 `SetType` 的一个例子。
+> 注意 虽然可以设置一个 `SerializationInfo` 的 `FullTypeName` 和 `AssemblyName` 属性，但不建议这样做。如果想要更改被序列化的类型，建议调用 `SerializationInfo` 的 `SetType` 方法，传递对目标 `Type` 对象的引用。调用 `SetType` 可确保类型的全名和定义程序集被正确设置。本章后面的 24.7 节「类型序列化为不同类型以及对象反序列化为不同对象」将展示调用 `SetType` 的一个例子。
 
 构造好并初始化好 `SerializationInfo` 对象后，格式化器调用类型的 `GetObjectData` 方法，向它传递对 `SerializationInfo` 对象的引用。`GetObjectData` 方法决定需要哪些信息来序列化对象，并将这些信息添加到 `SerializationInfo` 对象中。`GetObjectData` 调用 `SerializationInfo` 类型提供的 `AddValue` 方法的众多重载版本之一指定要序列化的信息。针对要添加的每个数据，都要调用一次 `AddValue`。
 
@@ -474,7 +474,7 @@ public class Dictionary<TKey, TValue> : ISerializable, IDeserializationCallback 
 
 > 注意 务必调用 `AddValue` 方法的某个重载版本为自己的类型添加序列化信息。如果一个字段的类型实现了 `ISerializable` 接口，就不要在字段上调用 `GetObjectData`。相反，调用 `AddValue` 来添加字段；格式化器会注意到字段的类型实现了 `ISerializable`，会帮你调用 `GetObjectData`。如果自己在字段对象上调用 `GetObjectData`，格式化器便不知道在对流进行反序列化时创建新对象。
 
-现在，格式化器获取已经添加到 `SerializationInfo` 对象的所有值，并把它们都序列化到流中。注意，我们还向 `GetObjectData` 方法传递了另一个参数，也就是对一个 `System.Runtime.Serialization.StreamingContext` 对象的引用。大多数类型的 `GetObjectData` 方法都会完全忽略这个参数，所以我现在不准备讨论它。相反，我准备把它放到本章后面的 24.6 节“流上下文”讨论。
+现在，格式化器获取已经添加到 `SerializationInfo` 对象的所有值，并把它们都序列化到流中。注意，我们还向 `GetObjectData` 方法传递了另一个参数，也就是对一个 `System.Runtime.Serialization.StreamingContext` 对象的引用。大多数类型的 `GetObjectData` 方法都会完全忽略这个参数，所以我现在不准备讨论它。相反，我准备把它放到本章后面的 24.6 节「流上下文」讨论。
 
 知道了如何设置序列化所需的全部信息之后，再来看反序列化。格式化器从流中提取一个对象时，会为新对象分配内存(通过调用 `System.Runtime.Serialize.FormatterServices` 类型的静态 `GetUninitializedObject` 方法)。最初，这个对象的所有字段都设为 `0` 或 `null`。然后，格式化器检查类型是否实现了 `ISerializable` 接口。如果存在这个接口，格式化器就尝试调用一个特殊构造器，它的参数和 `GetObjectData` 方法的完全一致。
 
@@ -492,7 +492,7 @@ public class Dictionary<TKey, TValue> : ISerializable, IDeserializationCallback 
 
 当然，完全可以定义自己的类型，让它从实现了 `ISerializable` 的 `GetObjectData` 方法和特殊构造器类型派生。如果你的类型也实现了 `ISerializable`，那么在你实现的 `GetObjectData` 方法和特殊构造器中，必须调用基类中的同名方法，确保对象能正确序列化和反序列化。这一点务必牢记，否则对象是不能正确序列化和反序列化的。下一节将解释如何正确地定义基类型未实现 `ISerializable` 接口一个 `ISerializable` 类型。
 
-如果你的派生类型中没有任何额外的字段，因而没有特殊的序列化/反序列化需求，就完全不必实现 `ISerializable`。和所有接口成员相似，`GetObjectData` 是 `virtual` 的，调用它可以正确地序列化对象。此外，格式化器将特殊构造器视为“已虚拟化”(virtualized)。换言之，反序列化期间，格式化器会检查要实例化的类型。如果那个类型没有提供特殊构造器，格式化器会扫描基类，直到它找到实现了特殊构造器的一个类。
+如果你的派生类型中没有任何额外的字段，因而没有特殊的序列化/反序列化需求，就完全不必实现 `ISerializable`。和所有接口成员相似，`GetObjectData` 是 `virtual` 的，调用它可以正确地序列化对象。此外，格式化器将特殊构造器视为「已虚拟化」(virtualized)。换言之，反序列化期间，格式化器会检查要实例化的类型。如果那个类型没有提供特殊构造器，格式化器会扫描基类，直到它找到实现了特殊构造器的一个类。
 
 > 重要提示 特殊构造器中的代码一般从传给它的 `SerializationInfo` 对象中提取字段。提取字段后，不保证对象已完全反序列化，所以特殊构造器中的代码不应该尝试操作它提取的对象。
 
@@ -560,7 +560,7 @@ internal sealed class Derived : Base, ISerializable {
 } 
 ```
 
-上述代码有一个名为 `Base` 的基类，它只用 `SerializableAttribute` 定制特性进行了标识。从 `Base` 派生的是 `Derived` 类，它除了也用`SerializableAttribute` 特性进行标识，还实现了 `ISerializable` 接口。为了使局面变得更有趣，两个类都定义了名为 `m_name` 的一个`String` 字段。调用 `SerializationInfo` 的 `AddValue` 方法时不能添加多个同名的值。在上述代码中，解决这个问题的方案是在字段名前附加类名作为前缀，从而对每个字段进行标识。例如，当 `GetObjectData` 方法调用 `AddValue` 来序列化 `Base` 的 `m_name` 字段时，写入的值的名称是“`Base+m_name`”。
+上述代码有一个名为 `Base` 的基类，它只用 `SerializableAttribute` 定制特性进行了标识。从 `Base` 派生的是 `Derived` 类，它除了也用`SerializableAttribute` 特性进行标识，还实现了 `ISerializable` 接口。为了使局面变得更有趣，两个类都定义了名为 `m_name` 的一个`String` 字段。调用 `SerializationInfo` 的 `AddValue` 方法时不能添加多个同名的值。在上述代码中，解决这个问题的方案是在字段名前附加类名作为前缀，从而对每个字段进行标识。例如，当 `GetObjectData` 方法调用 `AddValue` 来序列化 `Base` 的 `m_name` 字段时，写入的值的名称是「`Base+m_name`」。
 
 ## <a name="24_6">24.6 流上下文</a>
 
@@ -592,7 +592,7 @@ internal sealed class Derived : Base, ISerializable {
 
 知道如何获取这些信息后，接着讨论如何设置。`IFormatter` 接口(同时由 `BinaryFormatter` 和 `SoapFormatter` 类型实现)定义了`StreamingContext` 类型的可读/可写属性 `Context`。构造格式化器时，格式化器会初始化它的 `Context` 属性，将 `StreamingContextStates` 设为 `All`，将对额外状态对象的引用设为 `null`。
 
-格式化器构造好之后，就可以使用任何 `StreamingContextStates` 位标志来构造一个 `StreamingContext` 结构，并可选择传递一个对象引用(对象中包含你需要的任何额外的上下文信息)。现在，在调用格式化器的 `Serialize` 或 `Deserialize` 方法之前，你只需要将格式化器的 `Context` 属性设为这个新的 `StreamingContext` 对象。在本章前面的 24.1 节“序列化/反序列化快速入门”中，已通过 `DeepClone` 方法演示了如何告诉格式化器，对一个对象图进行序列化/反序列化的唯一目的就是克隆对象图中的所有对象。
+格式化器构造好之后，就可以使用任何 `StreamingContextStates` 位标志来构造一个 `StreamingContext` 结构，并可选择传递一个对象引用(对象中包含你需要的任何额外的上下文信息)。现在，在调用格式化器的 `Serialize` 或 `Deserialize` 方法之前，你只需要将格式化器的 `Context` 属性设为这个新的 `StreamingContext` 对象。在本章前面的 24.1 节「序列化/反序列化快速入门」中，已通过 `DeepClone` 方法演示了如何告诉格式化器，对一个对象图进行序列化/反序列化的唯一目的就是克隆对象图中的所有对象。
 
 ## <a name="24_7">24.7 将类型序列化为不同的类型以及将对象反序列化为不同的对象</a>
 
@@ -674,7 +674,7 @@ private static void SingletonSerializationTest() {
 
 现在，`SingletonSerializationTest` 调用格式化器的 `Serialize` 方法序列化数组及其元素。序列化第一个 `Singleton` 时，格式化器检测到 `Singleton` 类型实现了 `ISerializable` 接口，并调用 `GetObjectData` 方法。这个方法调用 `SetType`，向它传递 `SingletonSerializationHelper` 类型，告诉格式化器将 `Singleton` 对象序列化成一个 `SingletonSerializationHelper` 对象。由于 `AddValue` 没有调用，所以没有额外的字段信息写入流。由于格式化器自动检测出两个数组元素都引用一个对象，所以格式化器只序列化一个对象。
 
-序列化数组之后，`SingletonSerializationTest` 调用格式化器的 `Deserialize` 方法。对流进行反序列化时，格式化器尝试反序列化一个`SingletonSerializationHelper` 对象，这是格式化器之前被 “欺骗”所序列化的东西。(事实上，这正是为什么 `Singleton` 类不提供特殊构造器的原因：实现 `ISerializable` 接口时通常都要求提供这个特殊构造器。)构造好 `SingletonSerializationHelper` 对象后，格式化器发现这个类型实现了 `System.Runtime.Serialization.IObjectReference` 接口。这个接口在 FCL 中是像下面这样定义的：
+序列化数组之后，`SingletonSerializationTest` 调用格式化器的 `Deserialize` 方法。对流进行反序列化时，格式化器尝试反序列化一个`SingletonSerializationHelper` 对象，这是格式化器之前被「欺骗」所序列化的东西。(事实上，这正是为什么 `Singleton` 类不提供特殊构造器的原因：实现 `ISerializable` 接口时通常都要求提供这个特殊构造器。)构造好 `SingletonSerializationHelper` 对象后，格式化器发现这个类型实现了 `System.Runtime.Serialization.IObjectReference` 接口。这个接口在 FCL 中是像下面这样定义的：
 
 ```C#
 public interface IObjectReference {
@@ -682,21 +682,21 @@ public interface IObjectReference {
 }
 ```
 
-如果类型实现了这个接口，格式化器会调用 `GetRealObject` 方法。这个方法返回在对象反序列化好之后你真正想引用的对象。在我的例子中，`SingletonSerializationHelper` 类型让 `GetRealObject` 返回对 AppDomain 中已经存在的 `Singleton` 对象的一个引用。所以，当格式化器的 `Deserialize` 方法返回时，`a2` 数组包含两个元素，两者都引用 AppDomain 的 `Singleton` 对象。用于帮助进行反序列化的 `SingletonSerializationHelper` 对象立即变得“不可达”了<sup>①</sup>，将来会被垃圾回收。
+如果类型实现了这个接口，格式化器会调用 `GetRealObject` 方法。这个方法返回在对象反序列化好之后你真正想引用的对象。在我的例子中，`SingletonSerializationHelper` 类型让 `GetRealObject` 返回对 AppDomain 中已经存在的 `Singleton` 对象的一个引用。所以，当格式化器的 `Deserialize` 方法返回时，`a2` 数组包含两个元素，两者都引用 AppDomain 的 `Singleton` 对象。用于帮助进行反序列化的 `SingletonSerializationHelper` 对象立即变得「不可达」了<sup>①</sup>，将来会被垃圾回收。
 
 > ① 没有谁引用它了。 ———— 译注
 
-对 `WriteLine` 的第二个调用显示 “True“，证明 `a2` 数组的两个元素都引用同一个对象。第三个(也是最后一个)`WriteLine`调用也显示”True“，证明两个数组中的元素引用的是同一个对象。
+对 `WriteLine` 的第二个调用显示「True」，证明 `a2` 数组的两个元素都引用同一个对象。第三个(也是最后一个)`WriteLine`调用也显示「True」，证明两个数组中的元素引用的是同一个对象。
 
 ## <a name="24_8">24.8 序列化代理</a>
 
-前面讨论了如何修改一个类型的实现，控制该类型如何对它本身的实例进行序列化和反序列化。然而，格式化器还允许不是”类型实现的一部分“的代码重写该类型”序列化和反序列化其对象“的方式。应用程序代码之所以要重写(覆盖)类型的行为，主要是出于两方面的考虑。
+前面讨论了如何修改一个类型的实现，控制该类型如何对它本身的实例进行序列化和反序列化。然而，格式化器还允许不是「类型实现的一部分」的代码重写该类型「序列化和反序列化其对象」的方式。应用程序代码之所以要重写(覆盖)类型的行为，主要是出于两方面的考虑。
 
 * 允许开发人员序列化最初没有设计成要序列化的类型。
 
 * 允许开发人员提供一种方式将类型的一个版本映射到类型的一个不同的版本
 
-简单地说，为了使这个机制工作起来，首先要定义一个”代理类型“(surrogate type)，它接管对现有类型进行序列化和反序列化的行动。然后，向格式化器登记该代理类型的实例，告诉格式化器代理类型要作用于现有的哪个类型。一旦格式化器要对现有类型的实例进行序列化或反序列化，就调用由你的代理对象定义的方法。下面用一个例子演示这一切是如何工作的。
+简单地说，为了使这个机制工作起来，首先要定义一个「代理类型」(surrogate type)，它接管对现有类型进行序列化和反序列化的行动。然后，向格式化器登记该代理类型的实例，告诉格式化器代理类型要作用于现有的哪个类型。一旦格式化器要对现有类型的实例进行序列化或反序列化，就调用由你的代理对象定义的方法。下面用一个例子演示这一切是如何工作的。
 
 序列化代理类型必须实现 `System.Runtime.Serialization.ISerializationSurrogate` 接口，它在 FCL 中像下面这样定义：
 
@@ -726,13 +726,13 @@ internal sealed class UniversalToLocalTimeSerializationSurrogate : ISerializatio
 } 
 ```
 
-`GetObjectData` 方法在这里的工作方式与 `ISerializable` 接口的 `GetObjectData` 方法差不多。唯一的区别在于，`ISerializationSurrogate` 的 `GetObjectData` 方法要获取一个额外的参数————对要序列化的”真实”对象的引用。在上述 `GetObjectData` 方法中，这个对象转型为 `DateTime`，值从本地时间转换为世界时，并将一个字符串(使用通用完整日期/时间模式来格式化)添加到 `SerializationInfo` 集合。
+`GetObjectData` 方法在这里的工作方式与 `ISerializable` 接口的 `GetObjectData` 方法差不多。唯一的区别在于，`ISerializationSurrogate` 的 `GetObjectData` 方法要获取一个额外的参数————对要序列化的「真实」对象的引用。在上述 `GetObjectData` 方法中，这个对象转型为 `DateTime`，值从本地时间转换为世界时，并将一个字符串(使用通用完整日期/时间模式来格式化)添加到 `SerializationInfo` 集合。
 
 `SetObjectData` 方法用于反序列化一个 `DateTime` 对象。调用这个方法时要向它传递一个 `SerializationInfo` 对象引用。`SetObjectData` 从这个集合中获取字符串形式的日期，把它解析成通用完整日期/时间模式的字符串，然后将结果 `DateTime` 对象从世界时转换成计算机的本地时间。
 
 传给 `SetObjectData` 第一个参数的 `Object` 有点儿奇怪。在调用 `SetObjectData` 之前，格式化器分配(通过 `FormatterServices` 的静态方法 `GetUninitializedObject`)要代理的那个类型的实例。实例的字段全是 `0/null`，而且没有在对象上调用构造器。`SetObjectData` 内部的代码为了初始化这个实例的字段，可以使用传入的 `SerializationInfo` 中的值，并让 `SetObjectData` 返回 `null`。另外，`SetObjectData`可以创建一个完全不同的对象，甚至创建不同类型的变量，并返回对新对象的引用。在这种情况下，格式化器会忽略对传给 `SetObjectData` 的对象的任何改变。
 
-在我的例子中，`UniversalToLocalTimeSerializationSurrogate` 类扮演了 `DateTime` 类型的代理的角色。`DateTime` 是值类型，所以 `obj` 参数引用了一个 `DateTime` 的已装箱实例。大多数值类型中的字段都无法更改(值类型本来就设计成“不可变”)，所以我的 `SetObjectData` 方法会忽略`obj`参数，并返回一个新的 `DateTime`对象，其中已装好了期望的值。
+在我的例子中，`UniversalToLocalTimeSerializationSurrogate` 类扮演了 `DateTime` 类型的代理的角色。`DateTime` 是值类型，所以 `obj` 参数引用了一个 `DateTime` 的已装箱实例。大多数值类型中的字段都无法更改(值类型本来就设计成「不可变」)，所以我的 `SetObjectData` 方法会忽略`obj`参数，并返回一个新的 `DateTime`对象，其中已装好了期望的值。
 
 此时，那肯定会问，序列化/反序列化一个 `DateTime` 对象时，格式化器怎么知道要用这个 `ISerializationSurrogate` 类型呢？以下代码对 `UniversalToLocalTimeSerializationSurrogate` 类进行了测试：
 
@@ -784,7 +784,7 @@ private static void SerializationSurrogateDemo() {
 
 多个 `SurrogateSelector` 对象可链接到一起。例如，可以让一个 `SurrogateSelector` 对象维护一组序列化代理，这些序列化代理(surrogate)用于将类型序列化成带代理(proxy)<sup>①</sup>，以便通过网络传送，或者跨越不同的 AppDomain 传送。还可以让另一个 `SurrogateSelector` 对象维护一组序列化代理，这些序列化代理用于将版本 1 的类型转换成版本 2 的类型。
 
-> ① 两个“代理”是不同的概念。`surrogate` 对象的负责序列化，而 `proxy` 对象负责跨越 `AppDomain` 边界访问对象(参见 22.2.1 节“跨越 `AppDomain` 边界访问对象”)。 ———— 译注
+> ① 两个「代理」是不同的概念。`surrogate` 对象的负责序列化，而 `proxy` 对象负责跨越 `AppDomain` 边界访问对象(参见 22.2.1 节「跨越 `AppDomain` 边界访问对象」)。 ———— 译注
 
 如果有多个希望格式化器使用的 `SurrogateSelector` 对象，必须把它们链接到一个链表中。`SurrogateSelector` 类型实现了 `ISurrogateSelector` 接口，该接口定义了三个方法。这些方法全部跟链接有关。下面展示了 `ISurrogateSelector` 接口是如何定义的：
 

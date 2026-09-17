@@ -6,9 +6,9 @@
 * <a href="#25_2">框架投射</a>
 * <a href="#25_3">用 C# 定义 WinRT 组件</a>
 
-Windows 8/8.1 带来了一个新类库，应用程序可通过它访问操作系统功能。类库正式名称是 **Windows 运行时**(Windows Runtime， WinRT)，其组件通过 WinRT 类型系统访问。首次发布时， WinRT 的许多目标都和 CLR 相同，例如简化应用程序开发，以及允许代码用不同编程语言实现以简化互操作。特别是，Microsoft 支持在原生 C/C++、JavaScript(通过 Microsoft 的 “Chakra” JavaScript 虚拟机)和 C#/Visual Basic(通过 CLR)中使用 WinRT 组件。
+Windows 8/8.1 带来了一个新类库，应用程序可通过它访问操作系统功能。类库正式名称是 **Windows 运行时**(Windows Runtime， WinRT)，其组件通过 WinRT 类型系统访问。首次发布时， WinRT 的许多目标都和 CLR 相同，例如简化应用程序开发，以及允许代码用不同编程语言实现以简化互操作。特别是，Microsoft 支持在原生 C/C++、JavaScript(通过 Microsoft 的「Chakra」 JavaScript 虚拟机)和 C#/Visual Basic(通过 CLR)中使用 WinRT 组件。
 
-图 25-1 展示了 Windows 的 WinRT 组件所公开的功能，以及可以访问它们的 Microsoft 语言。对于原生 C/C++ 实现的应用程序，开发人员必须为每种 CPU 架构(x86，x64 和 ARM)单独编译代码。相比之下，.NET 开发人员只需编译一次(编译成 IL，CLR 自行将其编译成与主机 CPU 对应的本机代码)。JavaScript 应用程序则自带了源代码，“Chakra”虚拟机解析这些源代码，把它编译成与主机 CPU 对应的本机代码。其他公司也可制作能与 WinRT 组件互操作的语言和环境。
+图 25-1 展示了 Windows 的 WinRT 组件所公开的功能，以及可以访问它们的 Microsoft 语言。对于原生 C/C++ 实现的应用程序，开发人员必须为每种 CPU 架构(x86，x64 和 ARM)单独编译代码。相比之下，.NET 开发人员只需编译一次(编译成 IL，CLR 自行将其编译成与主机 CPU 对应的本机代码)。JavaScript 应用程序则自带了源代码，「Chakra」虚拟机解析这些源代码，把它编译成与主机 CPU 对应的本机代码。其他公司也可制作能与 WinRT 组件互操作的语言和环境。
 
 ![25_1](../resources/images/25_1.png)  
 
@@ -16,7 +16,7 @@ Windows 8/8.1 带来了一个新类库，应用程序可通过它访问操作系
 
 Windows Store 应用和桌面应用程序可通过 WinRT 组件来利用操作系统的功能。Windows 配套提供的 WinRT 组件数量比 .NET Framework 类库小多了。但设计就是这样的，组件的目的是公开操作系统最擅长的事情，也就是对硬件和跨应用程序的功能进行抽象。所以，大多数 WinRT 组件都只是公开了功能，比如存储、联网、图形、媒体、安全性、线程处理等。而其他核心语言服务(比如字符串操作)和较复杂的框架(比如 LINQ)不是由操作系统提供，而是由访问 WinRT 组件的语言提供。
 
-WinRT 组件内部作为“组件对象模型”(Component Object Model，COM)组件来实现，后者是 Microsoft 1993 年推出的技术。COM 当年被认为过于复杂，规则过于难解，是一个很让人头疼的编程模型。当 COM 实际是有许多亮点的。多年来，Microsoft 对其进行了大量修订，显著地进行了简化。Microsoft 对 WinRT 组件进行了一个很大的调整，不是使用类库来描述 COM 组件的 API，而是使用元数据。你没有看错，WinRT 组件使用由 ECMA 协会标准化的 .NET 元数据格式(ECMA-335)来描述其API。
+WinRT 组件内部作为「组件对象模型」(Component Object Model，COM)组件来实现，后者是 Microsoft 1993 年推出的技术。COM 当年被认为过于复杂，规则过于难解，是一个很让人头疼的编程模型。当 COM 实际是有许多亮点的。多年来，Microsoft 对其进行了大量修订，显著地进行了简化。Microsoft 对 WinRT 组件进行了一个很大的调整，不是使用类库来描述 COM 组件的 API，而是使用元数据。你没有看错，WinRT 组件使用由 ECMA 协会标准化的 .NET 元数据格式(ECMA-335)来描述其API。
 
 这个元数据格式正是本书一直在讨论的。元数据比类库更有表现力，而且 CLR 已经对元数据有了全面理解。此外，CLR 一开始就通过**运行时可调用包装器**(Runtime Callable Wrapper，RCW)和**COM 可调用包装器**(COM Callable Wrapper，CCW)实现了与 COM 组件的互操作。这使在 CLR 顶部运行的语言(如 C#)能无缝地与 WinRT 类型和组件进行互操作。
 
@@ -50,7 +50,7 @@ WinRT 类型系统在功能上不如CLR 类型系统丰富。下面总结了 Win
   .winmd 文件本身的名称必须和包含 WinRT 组件的命名空间匹配。例如，Wintellect.WindowsStore.winmd 文件必须在 `Wintellect.WindowsStore` 命名空间或者它的子命名空间中定义 WinRT 组件。由于 Windows 系统区分大小写，所以仅大小写不同的命名空间是不允许的。另外，WinRT 组件不能与命名空间同名。
 
 * **通用基类型**  
-  WinRT 组件不同享一个通用基类。CLR 投射一个 WinRT 类型时，感觉 WinRT 就像是从 `System.Object` 派生，因此所有 WinRT 类型都会继承所有公共方法，包括 `ToString`、`GetHashCode`、`Equals` 和 `GetType`。所以，在通过 C# 使用 WinRT 对象时，对象看起来是从 `System.Object` 派生，可在代码中到处传递 WinRT 对象而不会出任何问题。还可调用 “继承” 的方法，例如 `ToString`。
+  WinRT 组件不同享一个通用基类。CLR 投射一个 WinRT 类型时，感觉 WinRT 就像是从 `System.Object` 派生，因此所有 WinRT 类型都会继承所有公共方法，包括 `ToString`、`GetHashCode`、`Equals` 和 `GetType`。所以，在通过 C# 使用 WinRT 对象时，对象看起来是从 `System.Object` 派生，可在代码中到处传递 WinRT 对象而不会出任何问题。还可调用「继承」的方法，例如 `ToString`。
 
 * **核心数据类型**  
   WinRT 类型系统支持核心数据类型，包括 Boolean，无符号字节、16/32/64 位有符号和无符号整数、单精度和双精度浮点数、16位字符、字符串和 void<sup>①</sup>。和 CLR 一样，其他所有数据类型都由这些核心数据类型合成。
@@ -77,7 +77,7 @@ WinRT 类型系统在功能上不如CLR 类型系统丰富。下面总结了 Win
   对于 WinRT 接口的成员，其参数和返回类型只能是 WinRT 兼容的类型。
 
 * **方法**  
-  WinRT 提供了对方法重载的有限支持。具体地说，由于 JavaScript 使用动态类型，所以它分辨不了仅参数类型由区别的方法。例如，JavaScript 允许向原本期待字符串的方法传递数字。但 JavaScript 确实能区分获取一个参数和获取两个参数的方法。此外，WinRT 不支持操作符重载方法和默认参数值。另外，实参只能在封送进入或外出(marshal in or out)之间选择一个，永远都不能两者同时进行(marshal in and out)。这意味着不能向方法实参应用 `ref`，但应用 `out` 就是可以的。欲知详情，请参考下个列表的"数组"项目。
+  WinRT 提供了对方法重载的有限支持。具体地说，由于 JavaScript 使用动态类型，所以它分辨不了仅参数类型由区别的方法。例如，JavaScript 允许向原本期待字符串的方法传递数字。但 JavaScript 确实能区分获取一个参数和获取两个参数的方法。此外，WinRT 不支持操作符重载方法和默认参数值。另外，实参只能在封送进入或外出(marshal in or out)之间选择一个，永远都不能两者同时进行(marshal in and out)。这意味着不能向方法实参应用 `ref`，但应用 `out` 就是可以的。欲知详情，请参考下个列表的「数组」项目。
 
 * **属性**  
   WinRT 属性的数据类型只能指定 WinRT 兼容类型。WinRT 不支持有参属性或只写属性。
@@ -133,9 +133,9 @@ WinRT 类型系统在功能上不如CLR 类型系统丰富。下面总结了 Win
 
 ### 25.2.1 从 .NET 代码中调用异步 WinRT API
 
-线程以同步方式执行 I/O 操作时，线程可能阻塞不确定的时间。GUI 线程等待一个同步 I/O 操作时，应用程序 UI 会停止响应用户的输入，比如触摸、鼠标和手写笔事件，造成用户对应用程序感到厌烦。为了防止应用程序出现不响应的情况，执行 I/O 操作的 WinRT 组件通过异步 API 公开其功能。事实上，凡是 CPU 计算时间可能超过 50 毫秒的功能，WinRT 组件都通过异步 API 来公开该功能。本书第 V 部分“线程处理”将详细讨论如何构建响应灵敏的应用程序。
+线程以同步方式执行 I/O 操作时，线程可能阻塞不确定的时间。GUI 线程等待一个同步 I/O 操作时，应用程序 UI 会停止响应用户的输入，比如触摸、鼠标和手写笔事件，造成用户对应用程序感到厌烦。为了防止应用程序出现不响应的情况，执行 I/O 操作的 WinRT 组件通过异步 API 公开其功能。事实上，凡是 CPU 计算时间可能超过 50 毫秒的功能，WinRT 组件都通过异步 API 来公开该功能。本书第 V 部分「线程处理」将详细讨论如何构建响应灵敏的应用程序。
 
-由于如此多的 WinRT API 都是异步的，所以为了高效地使用它们，你需要理解如何通过 C#与它们互操作。例如以下代码：
+由于如此多的 WinRT API 都是异步的，所以为了高效地使用它们，你需要理解如何通过 C# 与它们互操作。例如以下代码：
 
 ```C#
 public void WinRTAsyncIntro() {
@@ -174,7 +174,7 @@ private void OpCompleted(IAsyncOperation<StorageFile> asyncOp, AsyncStatus statu
 
 两个 `IAsyncXxxWithProgress` 接口允许代码接收异步操作期间的定期进度更新。大多数异步操作都不提供进度更新，但有的会(比如后台下载和上传)。接收定时进度更新要求定义另一个回调方法，创建引用它的委托，并将委托赋给 `IAsyncXxxWithProgress` 对象的 `Progress` 属性。回调方法被调用时，会向其传递类型与泛型 `TProgress` 类型匹配的实参。
 
-.NET Framework 使用 `System.Threading.Tasks` 命名空间的类型来简化异步操作。我将在第 27 章“计算限制的异步操作”解释这些类型以及如何用它们执行计算操作，在第 28 章“I/O 限制的异步操作”解释如何用它们执行 I/O 操作。除此之外，C# 提供了 `async` 和 `await` 关键字，允许使用顺序编程模型来执行异步操作，从而大幅简化了编码。
+.NET Framework 使用 `System.Threading.Tasks` 命名空间的类型来简化异步操作。我将在第 27 章「计算限制的异步操作」解释这些类型以及如何用它们执行计算操作，在第 28 章「I/O 限制的异步操作」解释如何用它们执行 I/O 操作。除此之外，C# 提供了 `async` 和 `await` 关键字，允许使用顺序编程模型来执行异步操作，从而大幅简化了编码。
 
 以下代码重写了之前的 `WinRTAsyncIntro` 方法。这个版本利用了 .NET Framework 提供的一些扩展方法，将 WinRT 异步编程模型转变成更方便的 C# 编程模型。
 
@@ -316,7 +316,7 @@ async Task<XElement> FromStorageFileToXElement(StorageFile file) {
 }
 ```
 
-最后，`System.IO.WindowsRuntimeStreamExtensions` 类提供了一些扩展方法能将 WinRT 流接口(例如 `IRandomAccessStream`，`IInputStream` 和 `IOutputStream`)“转型”为 .NET Framework 的 `Stream` 类型，或者反向转换。
+最后，`System.IO.WindowsRuntimeStreamExtensions` 类提供了一些扩展方法能将 WinRT 流接口(例如 `IRandomAccessStream`，`IInputStream` 和 `IOutputStream`)「转型」为 .NET Framework 的 `Stream` 类型，或者反向转换。
 
 ```C#
 namespace System.IO { // 在 System.Runtime.WindowsRuntime.dll 中定义
@@ -336,7 +336,7 @@ namespace System.IO { // 在 System.Runtime.WindowsRuntime.dll 中定义
 }
 ```
 
-下例使用扩展方法将一个 WinRT `IInputStream` “转型” 为 .NET Framework `Stream` 对象。
+下例使用扩展方法将一个 WinRT `IInputStream` 「转型」为 .NET Framework `Stream` 对象。
 
 ```C#
 XElement FromWinRTStreamToXElement(IInputStream winRTStream) {
@@ -345,7 +345,7 @@ XElement FromWinRTStreamToXElement(IInputStream winRTStream) {
 } 
 ```
 
-注意，.NET Framework 提供的“转型”扩展方式幕后不仅仅是执行转型。具体地说，将 WinRT 流转换成 .NET Framework 流时，会在托管堆中为 WinRT 流隐式创建一个缓冲区。结果是大多数操作都向这个缓冲区写入，不需要跨越互操作边界，这提升了性能。涉及大量小的 I/O 操作(比如解析 XML 文档)时，性能的提升尤其明显。
+注意，.NET Framework 提供的「转型」扩展方式幕后不仅仅是执行转型。具体地说，将 WinRT 流转换成 .NET Framework 流时，会在托管堆中为 WinRT 流隐式创建一个缓冲区。结果是大多数操作都向这个缓冲区写入，不需要跨越互操作边界，这提升了性能。涉及大量小的 I/O 操作(比如解析 XML 文档)时，性能的提升尤其明显。
 
 使用 .NET Framework 流投射的好处是，在同一个 WinRT 流实例上多次执行一个 `AsStreamXxx` 方法，不用担心会创建多个相互没有连接的缓冲区，造成向一个缓冲区写入的数据在另一个那里看不见。.NET Framework 的 API 确保每个流对象都有唯一的适配器实例，所有用户共享同一个缓冲区。
 
@@ -455,9 +455,9 @@ namespace System.Runtime.InteropServices.WindowsRuntime {
 
 用 C# 定义能由原生 C/C++ 代码使用的 WinRT 组件也没有多大意义。一般情况下，应用程序关心性能和内存消耗时才会用原生 C/C++ 来实现。这时不太可能使用由托管代码实现的 WinRT 组件，否则就要被迫在进程中加载 CLR，增大内存消耗和降低性能(因为要进行垃圾回收和 JIT 编译)。所以，大多数 WinRT 组件(比如随同 Windows 提供的那些)都是用原生代码实现的。当然，如果原生 C++ 应用的某些部分对性能不敏感，就可考虑利用 .NET Framework 的功能来提高开发效率。例如，必应地图 Bing Maps 用原生 C++ 和 DirectX 绘制 UI，但业务逻辑用 C# 实现。
 
-所以，我认为用 C# 实现的 WinRT 组件最佳应用场合就是：Windows Store 应用的开发人员用 HTML 和 CSS 构建 UI。然后，使用 JavaScript 代码将 UI 和用 C# WinRT 组件实现的业务逻辑“粘合”起来。还有一个应用场合是在 HTML/JavaScript 应用中使用现有的 FCL 功能(比如 WCF)。HTML/JavaScript 开发人员已习惯了浏览器引擎造成的性能损失和内存消耗，所以基本上能接受使用 CLR 造成的额外性能损失和内存消耗。
+所以，我认为用 C# 实现的 WinRT 组件最佳应用场合就是：Windows Store 应用的开发人员用 HTML 和 CSS 构建 UI。然后，使用 JavaScript 代码将 UI 和用 C# WinRT 组件实现的业务逻辑「粘合」起来。还有一个应用场合是在 HTML/JavaScript 应用中使用现有的 FCL 功能(比如 WCF)。HTML/JavaScript 开发人员已习惯了浏览器引擎造成的性能损失和内存消耗，所以基本上能接受使用 CLR 造成的额外性能损失和内存消耗。
 
-用 C# 定义 WinRT 组件首先要在 Microsoft Visual Studio 中创建“Windows 运行时组件”项目。创建的其实是一个普通的类库项目，但 C# 编译器会自动添加 `t/:winmdobj` 命令行开关来生成 .winmdobj 文件。文件中会插入一些和平时不同的 IL 代码。例如，WinRT 组件采用和 CLR 不同的方式为事件添加和删除委托。所以，如果指定了这个编译器开关，编译器就会为事件的添加和删除方法生成不同的代码。本节稍后会展示如何显式地实现事件的添加和删除方法。
+用 C# 定义 WinRT 组件首先要在 Microsoft Visual Studio 中创建「Windows 运行时组件」项目。创建的其实是一个普通的类库项目，但 C# 编译器会自动添加 `t/:winmdobj` 命令行开关来生成 .winmdobj 文件。文件中会插入一些和平时不同的 IL 代码。例如，WinRT 组件采用和 CLR 不同的方式为事件添加和删除委托。所以，如果指定了这个编译器开关，编译器就会为事件的添加和删除方法生成不同的代码。本节稍后会展示如何显式地实现事件的添加和删除方法。
 
 编译器生成 .winmdobj 文件后将启动 WinMD 实用程序(WinMDExp.exe)<sup>①</sup>，向它传递由编译器生成的 .winmdobj，.pdb 和 .xml(doc)文件。WinMDExp.exe 实用程序检查文件的元数据，确保你的类型符合本章开头讨论的 WinRT 类型系统的各种规则。实用程序还会修改 .winmdobj 文件中的元数据；它一点儿都不会碰 IL 代码。具体地说，实用程序只能将 CLR 类型映射到等价的 WinRT 类型。例如，对 .NET Framework `IList<String>` 类型的引用被更改为 WinRT 的 `IVector<String>` 类型。WinMDExp.exe 输出的是可供其他语言使用的 .winmd 文件。
 
