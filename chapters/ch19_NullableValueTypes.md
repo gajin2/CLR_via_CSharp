@@ -8,7 +8,7 @@
 
 我们知道值类型的变量永远不会为 `null`；它总是包含值类型的值本身。事实上，这正是「值类型」一次的由来。遗憾的是，这在某些情况下会成为问题。例如，设计数据库时，可将一个列的数据类型定义成一个 32 位整数，并映射到 FCL(Framework Class Library)的 `Int32` 数据类型。但是，数据库中的一个列可能允许值为空；也就是说，该列在某一行上允许没有任何值。用 Microsoft .NET Framework 处理数据库数据可能变得很困难，因为在 CLR 中，没有办法将 `Int32` 值表示成 `null`。
 
-> 注意 Microsoft ADO.NET 的表适配器(table adapter)确实支持可空类型。遗憾的是 `System.Data.SqlTypes` 命名空间中的类型没有用可空类型替换，部分原因是类型之间没有「一对一」的对应关系。例如，`SqlDecimal` 类型最大允许 38 位数，而普通的 `Decimal` 类型最大允许 38 位数，而普通的 `Decimal` 类型最大只允许 29 位数。此外， `SqlString` 类型支持它自己的本地化和比较选项，而普通的 `String` 类型并不支持这些。
+> 注意 Microsoft ADO.NET 的表适配器(table adapter)确实支持可空类型。遗憾的是 `System.Data.SqlTypes` 命名空间中的类型没有用可空类型替换，部分原因是类型之间没有「一对一」的对应关系。例如，`SqlDecimal` 类型最大允许 38 位数，而普通的 `Decimal` 类型最大只允许 29 位数。此外， `SqlString` 类型支持它自己的本地化和比较选项，而普通的 `String` 类型并不支持这些。
 
 下面是以另一个例子：Java 的 `java.util.Date` 类是引用类型，所以该类型的变量能设为 `null`。但 CLR 的 `System.DateTime` 是值类型，`DateTime` 变量永远不能设为 `null`。如果用 Java 写的一个应用程序想和运行 CLR 的 Web 服务交流日期/时间，那么一旦 Java 程序发送 `null`，就会出问题，因为 CLR 不知道如何表示 `null`，也不知道如何操作它。
 
@@ -292,7 +292,7 @@ CLR 允许将已装箱的值类型 `T` 拆箱为一个 `T` 或者 `Nullable<T>`�
 // 创建已装箱的 Int32
 Object o = 5;
 
-// 
+//
 Int32? a = (Int32?) o;  // a = 5
 Int32 b = (Int32) o;    // b = 5
 

@@ -26,7 +26,7 @@
 
 * 将 `Serializable` 特性应用于类型，告诉序列化格式化器<sup>①</sup>一个实例的字段可以序列化和反序列化。
 
-> ① 「格式化器」是本书的译法，文档翻译成「格式化程序」。格式化器是实现了 `System.Runtime.Serialization.IFormatter` 接口的类型，它知道如何序列化和反序列化一个对象图。————译注 
+> ① 「格式化器」是本书的译法，文档翻译成「格式化程序」。格式化器是实现了 `System.Runtime.Serialization.IFormatter` 接口的类型，它知道如何序列化和反序列化一个对象图。————译注
 
 * 将 `AssemblyVersion` 特性应用于程序集，设置程序集的版本号。
 
@@ -126,7 +126,7 @@ internal sealed class SomeType<[typevar: SomeAttr] T> {     // 应用于泛型�
 ```C#
 namespace System {
     public class FlagsAttribute : System.Attribute {
-        public FlagsAttribute() { 
+        public FlagsAttribute() {
         }
     }
 }
@@ -150,7 +150,7 @@ namespace System {
 
         public FlagsAttribute() {
 
-        } 
+        }
     }
 }
 ```
@@ -202,22 +202,22 @@ public sealed class AttributeUsageAttribute : Attribute {
 ```C#
 [Flags, Serializable]
 public enum AttributeTargets
-{ 
+{
 	Assembly			= 0x0001,
-	Module				= 0x0002, 
-	Class				= 0x0004, 
-	Struct				= 0x0008, 
-	Enum				= 0x0010, 
-	Constructor			= 0x0020, 
-	Method				= 0x0040, 
-	Property			= 0x0080, 
-	Field				= 0x0100, 
-	Event				= 0x0200, 
-	Interface			= 0x0400, 
+	Module				= 0x0002,
+	Class				= 0x0004,
+	Struct				= 0x0008,
+	Enum				= 0x0010,
+	Constructor			= 0x0020,
+	Method				= 0x0040,
+	Property			= 0x0080,
+	Field				= 0x0100,
+	Event				= 0x0200,
+	Interface			= 0x0400,
 	Parameter			= 0x0800,
-	Delegate			= 0x1000, 
+	Delegate			= 0x1000,
 	ReturnValue			= 0x2000,
-	GenericParameter	= 0x4000, 
+	GenericParameter	= 0x4000,
 	All = Assembly      | Module | Class | Struct | Enum |
 		  Constructor   | Method | Property | Field | Event |
 		  Interface     | Parameter | Delegate | ReturnValue |
@@ -365,7 +365,7 @@ public sealed class Program {
     [Conditional("Release")]
     public void DoSomething() { }
 
-    public Program() { 
+    public Program() {
     }
 
     [CLSCompliant(true)]
@@ -417,20 +417,20 @@ public sealed class Program {
 编译并运行上述应用程序得到以下输出：
 
 ```cmd
-Attributes applied to Program: 
+Attributes applied to Program:
  System.SerializableAttribute
  System.Reflection.DefaultMemberAttribute
  MemberName=Main
  System.Diagnostics.DebuggerDisplayAttribute
  Value=Richter, Name=Jeff, Target=Program
 
-Attributes applied to DoSomething: 
+Attributes applied to DoSomething:
  System.Diagnostics.ConditionalAttribute
  ConditionalString=Debug
  System.Diagnostics.ConditionalAttribute
  ConditionalString=Release
 
-Attributes applied to Main: 
+Attributes applied to Main:
  System.CLSCompliantAttribute
  ISCompliant=True
  System.STAThreadAttribute
@@ -442,7 +442,7 @@ Attributes applied to .ctor: None
 
 除了判断是否向目标应用了一个特性的实例，可能还需要检查特性的字段来确定它们的值。一个办法是老老实实写代码检查特性类的字段值。但`System.Attribute` 重写了 `Object` 的 `Equals` 方法，会在内部比较两个对象的类型。不一致会返回 `false`。如果一致，`Equals` 会利用反射来比较两个特性对象中的字段值(为每个字段都调用 `Equals`)。所有字段都匹配就返回 `true`；否则返回 `false`。可在自己的定制特性类中重写 `Equals` 来移除反射的使用，从而提升性能。
 
-`System.Attribute` 还公开了虚方法 `Match`，可重写它来提供更丰富的语义。`Match`的默认实现只是调用 `Equal` 方法并返回它的结果。下例演示了如何重写 `Equals` 和 `Match`， 后者在一个特性代表另一个特性的子集的前提返回 `true`。另外，还演示了如何使用 `Match`。
+`System.Attribute` 还公开了虚方法 `Match`，可重写它来提供更丰富的语义。`Match`的默认实现只是调用 `Equals` 方法并返回它的结果。下例演示了如何重写 `Equals` 和 `Match`， 后者在一个特性代表另一个特性的子集的前提返回 `true`。另外，还演示了如何使用 `Match`。
 
 ```C#
 using System;
@@ -468,7 +468,7 @@ internal sealed class AccountsAttribute : Attribute {
         // if (!base.Match(obj)) return false;
 
         // 出于 'this' 不为 null，所以假如 obj 为 null，
-        // 那么对象肯定不匹配 
+        // 那么对象肯定不匹配
         // 注意：如果你信任基类正确实现了 Match，
         // 那么下面这一行可以删除
         if (obj == null) return false;
@@ -574,7 +574,7 @@ Program types can NOT write checks.
 
 ## <a name="18_6">18.6 检测定制特性时不创建从 Attribute 派生的对象</a>
 
-本节将讨论如何利用另一种技术检测应用于元数据记录项的特性。在某些安全性要求严格的场合，这个技术能保证不执行从 `Attribute` 的 `GetCustomAttribute` 或者 `GetCustomAttributes` 方法时，这些方法会在内部调用特性类的构造器，而且可能调用属性的 `set` 访问器。此外，首次访问类型会造成 CLR 调用类型的类型构造器(如果有的话)。在构造器、`set`访问器方法以及类型构造器中，可能包含每次查找特性都要执行的代码。这就相当于允许未知代码在 `AppDomain` 中运行，所以存在安全隐患。
+本节将讨论如何利用另一种技术检测应用于元数据记录项的特性。在一些对安全性要求较高的场景下，该替代方案可以保证不会执行任何继承自`Attribute`的类中的代码。毕竟，当调用`Attribute`的`GetCustomAttribute(s)`方法时，这些方法在内部会调用特性类的构造函数，还可能调用属性的 set 访问器方法。此外，首次访问类型会造成 CLR 调用类型的类型构造器(如果有的话)。在构造器、`set`访问器方法以及类型构造器中，可能包含每次查找特性都要执行的代码。这就相当于允许未知代码在 `AppDomain` 中运行，所以存在安全隐患。
 
 可用 `System.Reflection.CustomAttributeData` 类在查找特性的同时禁止执行特性类中的代码。该类定义了静态方法 `GetCustomAttributes` 来获取与目标关联的特性。方法有 4 个重载版本，分别获取一个 `Assembly`，`Module`，`ParameterInfo` 和 `MemberInfo`。 该类在 `System.Reflection` 命名空间(将在第 23 章「程序集加载和反射」讨论)中定义。通过，先用 `Assembly` 的静态方法 `ReflectionOnlyLoad`(也在第 23 章讨论)加载程序集，再用`CustomAttributeData`类分析这个程序集的元数据中的特性。简单地说，`ReflectionOnlyLoad` 以特殊方式加载程序集，期间会禁止 CLR 执行程序集中的任何代码；其中包括类型构造器。
 
@@ -599,7 +599,7 @@ public sealed class Program {
     [Conditional("Release")]
     public void DoSomething() { }
 
-    public Program() { 
+    public Program() {
     }
 
     [CLSCompliant(true)]
@@ -651,7 +651,7 @@ public sealed class Program {
 编译并运行上述应用程序，将获得以下输出：
 
 ```cmd
-Attributes applied to Program: 
+Attributes applied to Program:
  System.SerializableAttribute
     Constructor called=Void .ctor()
     Positonal arguments passed to constructor: None
@@ -672,7 +672,7 @@ Attributes applied to Program:
     Name=Target, Type=System.Type, Value=Program
 
 
-Attributes applied to DoSomething: 
+Attributes applied to DoSomething:
  System.Diagnostics.ConditionalAttribute
     Constructor called=Void .ctor(System.String)
     Positonal arguments passed to constructor:
@@ -686,7 +686,7 @@ Attributes applied to DoSomething:
     Named arguments set after construction: None
 
 
-Attributes applied to Main: 
+Attributes applied to Main:
  System.CLSCompliantAttribute
     Constructor called=Void .ctor(Boolean)
     Positonal arguments passed to constructor:
