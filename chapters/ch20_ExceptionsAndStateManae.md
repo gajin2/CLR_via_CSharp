@@ -96,7 +96,7 @@ private void SomeMethod() {
 
 如果代码需要执行一般性的资源清理操作，需要从异常中恢复，或者两者都需要，就可以放到 `try` 块中。负责清理的代码应放到一个 `finally` 块中。 `try` 块还可包含也许会抛出异常的代码。负责异常恢复的代码应放到一个或多个 `catch`块中。针对应用程序能从中安全恢复的每一种异常，都应该创建一个 `catch` 块。一个 `try` 块至少要有一个关联的 `catch` 块或 `finally` 块，单独一个 `try` 块没有意义， C# 也不允许。
 
-> 重要提示 开发人员有时不知道应该在一个 `try` 块中放入多少代码。这据图取决于状态管理。如果在一个 `try` 块中执行多个可能抛出同一个异常类型的操作，但不同的操作有不同的异常恢复措施，就应该将每个操作都放到它自己的 `try`块中，这样才能正确地恢复状态。
+> 重要提示 开发人员有时不知道应该在一个 `try` 块中放入多少代码。这取决于状态管理。如果在一个 `try` 块中执行多个可能抛出同一个异常类型的操作，但不同的操作有不同的异常恢复措施，就应该将每个操作都放到它自己的 `try`块中，这样才能正确地恢复状态。
 
 ### 20.2.2 `catch`块
 
@@ -124,7 +124,7 @@ CLR 自上而下搜索匹配的 `catch` 块，所以应该将具体的异常放�
 
 * 让线程从 `catch` 块的底部退出<sup>③</sup>。
 
-> ③ 次退出(fall out of the bottom of the catch block)非彼退出。不是说要终止线程，而是说执行正常地「贯穿」 `catch` 块的底部，并执行匹配的 `finally`块。 ——— 译注
+> ③ 此退出(fall out of the bottom of the catch block)非彼退出。不是说要终止线程，而是说执行正常地「贯穿」 `catch` 块的底部，并执行匹配的 `finally`块。 ——— 译注
 
 本章稍后将针对每一种技术的使用时机提供一些指导方针。选择前两种技术将抛出异常，CLR 的行为和之前说的一样：回溯调用栈，查找捕捉类型与抛出的异常的类型匹配的`catch`块。
 
@@ -169,14 +169,13 @@ private void ReadData(String pathname) {
 
 线程执行完 `finally` 块中的代码后，会执行紧跟在 `finally` 块之后的语句。记住，`finally` 块中的代码是清理代码，这些代码只需对 `try` 块中发起的操作进行清理。`catch` 和 `finally` 块中的代码应该非常短(通常只有一两行)，而且要有非常高的成功率，避免自己又抛出异常。
 
-当然，(`catch`中的)异常恢复代码或(`finally` 中的)清理代码总是有可能失败并抛出异常的。但这个可能性不大。而且如果真的发生，通常意味着某个地方出了很严重的问题。很可能是某些状态在一个地方发生了损坏。即使`catch`或`finally`块内部抛出了异常也不是世界末日———— CLR 的异常机制仍会正常运转，好像异常是在`finally`块之后抛出的第一个异常，关于第一个异常的所有信息(例如堆栈跟踪)都将丢失
-。这个新异常可能(而且极有可能)不会由你的代码处理，最终变成一个未处理的异常。在这种情况下，CLR 会终止你的进程。这是件好事情，因为损坏的所有状态现在都会被销毁。相较于让应用程序继续运行，造成不可预知的结果以及可能的安全漏洞，这样处理要好得多！
+当然，(`catch`中的)异常恢复代码或(`finally` 中的)清理代码总是有可能失败并抛出异常的。但这个可能性不大。而且如果真的发生，通常意味着某个地方出了很严重的问题。很可能是某些状态在一个地方发生了损坏。即使`catch`或`finally`块内部抛出了异常也不是世界末日 ———— CLR 的异常机制仍会正常运转，好像异常是在`finally`块之后抛出的第一个异常，关于第一个异常的所有信息(例如堆栈跟踪)都将丢失。这个新异常可能(而且极有可能)不会由你的代码处理，最终变成一个未处理的异常。在这种情况下，CLR 会终止你的进程。这是件好事情，因为损坏的所有状态现在都会被销毁。相较于让应用程序继续运行，造成不可预知的结果以及可能的安全漏洞，这样处理要好得多！
 
 我个人认为，C# 团队应该为异常处理机制选择一套不同的语言关键字。程序员想做的是尝试(`try`)执行一些代码。如果发生错误，要么处理(`handle`)错误，以便从错误中恢复并继续；要么进行补偿(`compensate`)来撤消一些状态更改，并向调用者上报错误。程序员还希望确保清楚操作(`cleanup`)无论如何都会发生。左边的代码是目前 C# 编译器所支持的方法，右边的是我推荐的可读性更佳的方式：
 
-![20_0](../resources/images/20_0.png)  
+![20_0](../resources/images/20_0.png)
 
-> CLS 和非 CLS异常  
+> CLS 和非 CLS异常
 > 所有面向 CLR 的编程语言都必须支持抛出从 `Exception` 派生的对象，因为公共语言规范(Common Language Specification, CLS)对此进行了硬性规定。但是，CLR 实际允许抛出任何类型的实例，而且有些编程语言允许代码抛出非 CLS 相容的异常对象，比如一个 `String`，`Int32` 和 `DateTime` 等。C# 编译器只允许代码抛出从 `Exception` 派生的对象，而用其他一些语言写的代码不仅允许抛出 `Exception`派生对象，还允许抛出非 `Exception` 派生对象。
 
 > 许多程序员没有意识到 CLR 允许抛出任何对象来报告异常。大多数开发人员以为只有派生自 `Exception` 的对象才能抛出。在 CLR 的 2.0 版本之前，程序员写 `catch` 块来捕捉异常时，只能捕捉 CLS 相容的异常。如果一个 C# 方法调用了用另一种编程语言写的方法，而且那个方法抛出一个非 CLS 相容的异常，那么 C# 代码根本不能捕捉这个异常，从而造成一些安全隐患。
@@ -300,7 +299,7 @@ using System;
 using System.Runtime.CompilerServices;
 
 internal sealed class SomeType {
-    
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     public void SomeMethod() {
         ...
@@ -357,7 +356,7 @@ System.Exception
  System.Reflection.CustomAttributeFormatException
  System.Security.HostProtectionException
  System.Security.Principal.IdentityNotMappedException
- System.IndexOutOfRangeException 
+ System.IndexOutOfRangeException
  System.InsufficientExecutionStackException
  System.InvalidCastException
  System.Runtime.InteropServices.InvalidComObjectException
@@ -458,10 +457,10 @@ public sealed class Exception<TExceptionArgs> : Exception, ISerializable where T
 
     public TExceptionArgs Args { get { return m_args; } }
 
-    public Exception(String message = null, Exception innerException = null) 
+    public Exception(String message = null, Exception innerException = null)
         : this(null, message, innerException) { }
 
-    public Exception(TExceptionArgs args, String message = null, 
+    public Exception(TExceptionArgs args, String message = null,
       Exception innerException = null) : base(message, innerException) {
         m_args = args;
     }
@@ -548,7 +547,7 @@ public static void TestException() {
 
 > 注意 我的 `Exception<TExceptionArgs>` 类有两个问题需要注意。第一个问题是，用它定义的任何异常类型都总是派生自 `System.Exception`。这在大多数时候都不是问题，而且浅而宽的异常类型层次结构还是一件好事。第二个问题是，Visual Studio 的未处理异常对话框不会显示 `Exception<T>`类型的泛型类型参数，如下图所示。
 
-![20_0_0](../resources/images/20_0_0.png)  
+![20_0_0](../resources/images/20_0_0.png)
 
 ## <a name="20_7">20.7 用可靠性换取开发效率</a>
 
@@ -650,7 +649,7 @@ private static Object OneStatment(Stream stream, Char charToFind) {
  L_0016: ldloc.0
  L_0017: ldfld char Program/<>c__DisplayClass1::charToFind
  L_001c: box [mscorlib]System.Char
- L_0021: stelem.ref 
+ L_0021: stelem.ref
  L_0022: ldloc.1
  L_0023: ldc.i4.1
  L_0024: ldstr ": "
@@ -689,7 +688,7 @@ private static Object OneStatment(Stream stream, Char charToFind) {
  L_0074: call !!0[] [System.Core]System.Linq.Enumerable::ToArray<char>
          (class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
  L_0079: ret
-} 
+}
 ```
 
 由此可见，构造`<>c__DisplayClass1`类(编译器生成的类型)、`Object[]`数组和`Func`委托，以及对`char`和`Decimal`进行装箱时，可能抛出一个`OutOfMemoryException`。调用`Concat`，`Where` 和 `ToArray`时，也会在内部分配内存。构造 `Decimal` 实例时，可能造成它的类型构造器被调用，并抛出一个 `TypeInitializationException`<sup>①</sup>。还存在对 `Decimal` 的 `op_Implicit` 操作符和 `op_Addition` 操作符方法的隐式调用，这些方法可能抛出一个 `OverflowException`。
@@ -898,7 +897,7 @@ public String CalculateSpreadsheetCell(Int32 row, Int32 column) {
     catch(DivideByZeroException) {  // 捕捉被零除错误
         result = "Can't show value: Divide by zero";
     }
-    catch (OverflowException) {     // 捕捉溢出错误 
+    catch (OverflowException) {     // 捕捉溢出错误
         result = "Can't show value: Too big";
     }
     return result;
@@ -976,7 +975,7 @@ internal sealed class PhoneBook {
         finally {
             if (fs != null) fs.Close();
         }
-        return phone;                
+        return phone;
     }
 }
 ```
@@ -1020,7 +1019,7 @@ private static void Reflection(Object o) {
     try {
         // 在这个对象上调用一个 DoSomething 方法
         var mi = o.GetType().GetMethod("DoSomething");
-        mi.Invoke(o, null);   // DoSomething 方法可能抛出异常 
+        mi.Invoke(o, null);   // DoSomething 方法可能抛出异常
     }
     catch (System.Reflection.TargetInvocationException e) {
         // CLR 将反射生成的异常转换成 TargetInvocationException
@@ -1037,32 +1036,33 @@ private static void Reflection(Object o) {
 
 类库开发人员压根儿用不着去想未处理的异常。只有应用程序的开发人员才需关心未处理的异常。而且应用程序应建立处理未处理异常的策略。Microsoft 建议应用程序开发人员接受 CLR 的默认策略。也就是说，应用程序发生未处理的异常时，Windows 会向事件日志写一条记录。为了查看该记录，可打开「事件查看器」应用程序，然后打开树结构中的「Windows日志」->「应用程序」节点，如图 20-1 所示。
 
-![20_1](../resources/images/20_1.png)  
+![20_1](../resources/images/20_1.png)
 
 图 20-1 Windows 事件日志显示应用程序因为未处理的异常而终止
 
 然而，还可以通过「Windows 操作中心」来获取更有趣的细节。为了启动操作中心，请单击系统托盘中的小旗，选择「打开操作中心」。然后，请展开「维护」，单击「查看可靠性历史记录」链接。随后，会在底部的窗格看到应用程序由于未处理的异常而终止，如图 20-2 所示。
 
-![20_2](../resources/images/20_2.png)  
+![20_2](../resources/images/20_2.png)
 
 图 20-2 「可靠性监视程序」显示引用程序由于未处理的异常而终止
 
 要查看已终止的应用程序的更多细节，请在「可靠性监视程序」中双击终止的应用程序。图 20-3 显示了这些细节，各个「问题签名」的含义在表 20-2 中进行了总结。托管应用程序生成的所有未处理的异常都放在 CLR20r3 这个存储段(bucket)中。
 
-![20_3](../resources/images/20_3.png)  
+![20_3](../resources/images/20_3.png)
 
 图 20-3 「可靠性监视程序」显示了与出错应用程序有关的更多细节
 
 表 20-2 问题签名
 
 |问题签名|说明<sup>*</sup>|
+|:---:|:---:|
 |01|EXE 文件名(限32个字符)|
 |02|EXE 文件的程序集版本号|
 |03|EXE 文件的时间戳|
 |04|EXE 文件的完整程序集名称(限 64 个字符)|
 |05|出错的程序集的版本|
 |06|出错的程序集的时间戳|
-|07|出错的程序集的类型和方法。这个值是一个 MethodDef 元数据标记(剥离力 0x06 高位字符)，代表抛出异常的方法。有了这个值之后，就可以通过 ILDasm.exe 来确定的有问题的类型和方法|
+|07|出错的程序集的类型和方法。这个值是一个 MethodDef 元数据标记(剥离掉 0x06 高位字节)，代表抛出异常的方法。有了这个值之后，就可以通过 ILDasm.exe 来确定有问题的类型和方法|
 |08|有问题的方法的 IL 指令。这个值是抛出异常的那个方法的 IL 指令中的一个偏移量。有了这个值之后，就可以通过 ILDasm.exe 来确定有问题的指令。|
 |09|抛出的异常类型(限 32 个字符)|
 
@@ -1113,19 +1113,19 @@ EXCEPTION_PRIV_INSTRUCTION STATUS_UNWIND_CONSOLIDATE.
 
 Visual Studio 调试器为异常提供了特殊支持。在当前已打开一个解决方案的前提下，请从「调试」菜单选择「异常」，随后会看到如图 20-4 所示的对话框。
 
-![20_4](../resources/images/20_4.png)   
+![20_4](../resources/images/20_4.png)
 
-图 20-4 「异常设置」对话框显示了不同种类的异常 
+图 20-4 「异常设置」对话框显示了不同种类的异常
 
 这个对话框显示了 Visual Studio 能识别的不同种类的异常。展开 Common Language Runtime Exceptions，会看到 Visual Studio 调试器能识别的命名空间集，如图 20-5 所示。
 
-![20_5](../resources/images/20_5.png)  
+![20_5](../resources/images/20_5.png)
 
 图 20-5 按命名空间划分的各种 CLR 异常
 
 展开一个命名空间，会看到在该命名空间中定义的所有 `System.Exception` 派生类型。例如，图 20-6 展示的是 `System` 命名空间中的CLR 异常。
 
-![20_6](../resources/images/20_6.png)  
+![20_6](../resources/images/20_6.png)
 
 图 20-6 「异常」对话框，显示`System` 命名空间中定义的 CLR 异常
 
@@ -1135,7 +1135,7 @@ Visual Studio 调试器为异常提供了特殊支持。在当前已打开一个
 
 如果定义了自己的异常类型，可单击「添加」把它们添加到这个对话框中。这会打开如图 20-7 所示的对话框。
 
-![20_7](../resources/images/20_7.png)  
+![20_7](../resources/images/20_7.png)
 
 图 20-7 让 Visual Studio 识别你自己的异常类型：「新异常」对话框
 
@@ -1165,7 +1165,7 @@ Visual Studio 调试器为异常提供了特殊支持。在当前已打开一个
 
 如果希望了解异常处理对代码性能的影响，可使用 Windows 自带的「性能监视器」。图 20-8 展示了随同 .NET Framework 安装的与异常有关的计数器。
 
-![20_8](../resources/images/20_8.png)  
+![20_8](../resources/images/20_8.png)
 
 图 20-8  性能监视器显示了 .NET CLR Exceptions 计数器
 
@@ -1326,13 +1326,13 @@ public delegate void CleanupCode(Object userData, Boolean exceptionThrown);
 
 **代码协定**(code contract)提供了直线在代码中声明代码设计决策的一种方式。这些协定采取以下形式。
 
-* **前条件**  
+* **前条件**
   一般用于对实参进行验证
 
-* **后条件**  
+* **后条件**
   方法因为一次普通的返回或者抛出异常而终止时，对状态进行验证。
 
-* **对象不变性(Object Invariant)**  
+* **对象不变性(Object Invariant)**
   在对象的整个生命期内，确保对象的字段的良好状态。
 
 代码协定有利于代码的使用、理解、进化、测试、文档和早期错误检测<sup>①</sup>。可将前条件、后条件和对象不变性想象为方法签名的一部分。所以，代码新版本的协定可以变得更宽松。但不能变得更严格，否则会破坏向后兼容性。
@@ -1380,8 +1380,8 @@ public static class Contract {
 
 协定默认只作为文档使用，因为生成项目时没有定义 `CONTRACTS_FULL` 符号。为了发掘协定的附加价值，必须下载额外的工具和一个 Visual Studio 属性窗格，网址是 `http://msdn.microsoft.com/en-us/devlabs/dd491992.aspx`。Visual Studio之所以不包含所有代码协定工具，是因为该技术和增强的速度比 Visual Studio 本身快得多。下载和安装好额外的工具之后，会看到项目有一个新的属性窗格，如图 20-9 所示。
 
-![20_9](../resources/images/20_9.png)  
-图 20-9 一个 Visual Studio 项目的 Code Contracts 窗格  
+![20_9](../resources/images/20_9.png)
+图 20-9 一个 Visual Studio 项目的 Code Contracts 窗格
 
 启用代码协定功能要勾选 Perform Runtime Contract Checking，并从旁边的组合框中选择 Full。这样就会在生成项目时定义 `CONTRACTS_FULL` 符号，并在项目生成之后调用恰当的工具(稍后详述)。然后，运行时违反协定会引发`Contract`的`ContractFailed`事件。一般情况下，开发人员不向这个事件登记任何方法。但如果登记了方法，你登记的任何方法都会接收到一个 `ContractFailedEventArgs` 对象，它看起来像下面这样：
 
