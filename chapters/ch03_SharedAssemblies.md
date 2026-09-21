@@ -108,7 +108,8 @@ C# 编译器看到这个开关会打开指定文件(MyCompany.snk)，用私钥�
 
 生成包含清单的 PE 文件后，会对 PE 文件的完整内容(除去 Authenticode Signature、程序集强名称数据以及 PE 头校验和)进行哈希处理，如图 3-1 所示。哈希值用发布者的私钥进行签名，得到的 RSA 数字签名存储到 PE 文件的一个保留区域(进行哈希处理时，会忽略这个区域)。PE 文件的 CLR 头进行更新，反映数字签名在文件中的嵌入位置。
 
-![3_1](../resources/images/3_1.png)  
+![3_1](../resources/images/3_1.png)
+
 图 3-1 对程序集进行签名  
 
 发布者公钥也嵌入 PE 文件的 AssemblyDef 清单元数据表。文件名、程序集版本号、语言文化和公钥的组合为这个程序集赋予了一个强名称，它保证是唯一的。两家公司除非共享密钥对，否则即使都生成了名为 OurLibrary 的程序集，公钥/私钥也不能相同。
@@ -356,7 +357,7 @@ public sealed class Program {
 > 重要提示 严格意义上，刚才的例子并非百分之百正确。如果引用的不是.NET Framework 程序集定义的类型和方法，刚才的讨论没有任何问题。但是，.NET Framework程序集(MSCorLib.dll就是其中之一)和当前运行的 CLR 版本紧密绑定。引用 .NET Framework 程序集的任何程序集总是绑定到与 CLR 版本对应的那个版本(的 .NET Framework 程序集)。这就是所谓的「统一」(Unification)。之所以要「统一」，是因为所有.NET Framework 程序集都是针对一个特定版本的 CLR 来完成测试的。因此，「统一」代码结构(code stack)可确保应用程序正确工作。
 > 所以在前面的例子中，对 `System.Console`的`WriteLine` 方法的引用必然绑定到与当前 CLR 版本对应的 MSCorLib.dll 版本——无论程序集 AssemblyRef 元数据表引用哪个版本的 MSCorLib.dll。
 
-![3_2](../resources/images/3_2.png)  
+![3_2](../resources/images/3_2.png)
 
 图 3-2 对于引用了方法或类型的 IL 代码， CLR 怎样通过元数据来定位定义了类型的程序集文件  
 

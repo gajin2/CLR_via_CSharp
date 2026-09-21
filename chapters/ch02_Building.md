@@ -503,7 +503,9 @@ Microsoft 为什么引入「程序集」的概念？这是因为使用程序集�
 上述命令行指示 C# 编译器编译 FUT.cs 来生成 MultiFileLibrary.dll。由于指定了 `/t:library` 开关，所以生成的是含有清单元数据表的 DLL PE 文件。 `/addmodule:RUT.netmodule` 开关告诉编译器 RUT.netmodule 文件是程序集的一部分。具体地说， `/addmodule` 开关告诉编译器将文件添加到 FileDef 清单元数据表，并将 RUT.netmodule 的公开导出类型添加到 ExportedTypesDef 清单元数据表。
 
 编译器最终创建图 2-1 所示的两个文件。清单在右边的模块中。  
-![2_1](../resources/images/2_1.png)  
+
+![2_1](../resources/images/2_1.png)
+
   图 2-1  含有两个托管模块的多文件程序集，清单在其中一个模块中
 
 RUT.netmodule 文件包含编译 RUT.cs 所生成的 IL 代码。该文件还包含一些定义元数据表，描述了 RUT.cs 定义的类型、方法、字段、属性、事件等。还包含一些引用元数据表，描述了 RUT.cs 引用的类型、方法等。MultiFileLibrary.dll 是一个单独的文件。与 RUT.netmodule 相似，MultiFileLibrary.dll 包含编译 FUT.cs 所生成的 IL 代码以及类似的定义与引用元数据表。然而，MultiFileLibrary.dll 还包含额外的清单元数据表，这使 MultiFileLibrary.dll 成为了程序集。清单元数据表描述了程序集的所有文件(MultiFileLibrary.dll 本身和 RUT.netmodule)。清单元数据表还包含从 MultiFileLibrary.dll 和 RUT.netmodule 导出的所有公共类型。
@@ -542,7 +544,9 @@ ExportedType #1 (27000001)
 ### 2.4.1 使用 Visual Studio IDE 将程序集添加到项目中
 
 用 Visual Studio IDE 创建项目时，想引用的所有程序集都必须添加到项目中。为此，请打开解决方案资源管理器，右击想添加引用的项目，选择「添加引用」来打开「引用管理器」对话框，如图 2-2 所示。  
-![2_2](../resources/images/2_2.png)   
+
+![2_2](../resources/images/2_2.png)
+
 图 2-2 Visual Studio 的引用管理器  
 
 从列表中选择想让项目引用的程序集。如果程序集不在列表中，就单击「浏览」按钮，选择目标程序集(含清单的文件)并添加程序集引用。利用「解决方案」选项，当前项目可以引用同一个解决方案中的另一个项目创建的程序集。「COM」选项允许从托管源代码中访问一个非托管COM 服务器，这是通过 Visual Studio 自动生成的一个托管代理类实现的。利用「项目」选项，可以选择最近添加到其他项目的程序集。
@@ -561,9 +565,11 @@ csc /t:module FUT.cs
 al /out:MultiFileLibrary.dll /t:library FUT.netmodule RUT.netmodule
 ```
 
- 图 2-3 展示了执行这些命令后生成的文件。  
- ![2_3](../resources/images/2_3.png)  
- 图 2-3 由三个托管模块构成的多文件程序集，其中一个含有清单  
+图 2-3 展示了执行这些命令后生成的文件。
+
+![2_3](../resources/images/2_3.png)
+
+图 2-3 由三个托管模块构成的多文件程序集，其中一个含有清单
 
  这个例子首先创建两个单独的模块，即 RUT.netmodule 和 FUT.netmodule。两个模块都不是程序集，因为都不包含清单元数据表。然后生成第三个文件 MultiFileLibrary.dll，它是 DLL PE 文件(因为使用了 `/t[arget]:library` 开关)，其中不包含 IL 代码，但包含清单元数据表。清单元数据表指出 RUT.netmodule 和 FUT.netmodule 是程序集的一部分。最终的程序集由三个文件构成：MultiFileLibrary.dll， RUT.netmodule 和 FUT.netmodule。程序集链接器不能将多个文件合并成一个文件。
 
@@ -621,7 +627,8 @@ AL.exe 还支持`/link[resource]`开关，它同样获取包含资源的文件�
 
 AL.exe 或 CSC.exe 生成 PE 文件程序集时，还会在 PE 文件中嵌入标准的 Win32 版本资源。可查看文件属性来检查该资源。在应用程序代码中调用 `System.Diagnostics.FileVersionInfo` 的静态方法 `GetVersionInfo`，并传递程序集的路径作为参数，就可以获取并检查这些信息。图 2-4 显示的是 Ch02-3-MultiFileLibrary.dll 属性对话框的「详细信息」选项卡。 `csc /t:library Ch02-3-AssemblyVersionInfo.cs`
 
-![2_4](../resources/images/2_4.png)  
+![2_4](../resources/images/2_4.png)
+
 图 2-4 「Ch02-3-MultiFileLibrary.dll属性」对话框的「详细信息」选项卡
 
 > 重要提示 Windows 资源管理器的属性对话框明显遗漏了一些特性值。最遗憾的是没有显示 **AssemblyVersion** 这个特性的值，因为 CLR 加载程序集时会使用这个值，详情将在第 3 章讨论。  
@@ -688,7 +695,9 @@ using System.Reflection;
 |SpecialBuild|(无)|总是空白|
   
 > 重要提示 Visual Studio 新建 C# 项目时会在一个 Properties 文件夹中自动创建 AssemblyInfo.cs 文件。该文件除了包含本节描述的所有程序集版本特性，还包含要在第 3 章讨论的几个特性。可直接打开 AssemblyInfo.cs 文件并修改自己的程序集特有信息。 Visual Studio 还提供了对话框来帮你编辑该文件。要打开这个对话框，请打开项目的属性页，在「应用程序」选项卡中单击「程序集信息」。随后会看到如图 2-5 所示的对话框。 
-![2_5](../resources/images/2_5.png)  
+
+![2_5](../resources/images/2_5.png)
+
 图 2-5 Visual Studio 的「程序集信息」对话框
 
 #### 版本号

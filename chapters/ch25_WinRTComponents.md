@@ -10,7 +10,7 @@ Windows 8/8.1 带来了一个新类库，应用程序可通过它访问操作系
 
 图 25-1 展示了 Windows 的 WinRT 组件所公开的功能，以及可以访问它们的 Microsoft 语言。对于原生 C/C++ 实现的应用程序，开发人员必须为每种 CPU 架构(x86，x64 和 ARM)单独编译代码。相比之下，.NET 开发人员只需编译一次(编译成 IL，CLR 自行将其编译成与主机 CPU 对应的本机代码)。JavaScript 应用程序则自带了源代码，「Chakra」虚拟机解析这些源代码，把它编译成与主机 CPU 对应的本机代码。其他公司也可制作能与 WinRT 组件互操作的语言和环境。
 
-![25_1](../resources/images/25_1.png)  
+![25_1](../resources/images/25_1.png)
 
 图 25-1 Windows 的 WinRT 组件所公开的功能，以及访问它们的各种语言
 
@@ -168,7 +168,7 @@ private void OpCompleted(IAsyncOperation<StorageFile> asyncOp, AsyncStatus statu
 
 图 25-2 展示了各种 WinRT `IAsyncXxx` 接口。主要的 4 个接口都从 `IAsyncInfo` 接口派生。其中，两个 `IAsyncAction` 接口使你知道操作在什么时候结束，但这些操作没有返回值(`GetReults` 的返回类型是 `void`)。而两个 `IAsyncOperation` 接口不仅使你知道操作在什么时候结束，还能获取它们的返回值(`GetResults` 方法具有泛型 `TResult` 返回类型)。
 
-![25_2](../resources/images/25_2.png)  
+![25_2](../resources/images/25_2.png)
 
 图 25-2 和执行异步 I/O 与计算操作有关的 WinRT 接口
 

@@ -24,7 +24,8 @@ CLR 事件模型以**委托**为基础。委托是调用<sup>①</sup>回调方�
 应用程序初始化时只实例化一个 `MailManager` 实例，然后可以实例化任意数量的 `Fax` 和 `Pager`
 对象。图 11-1 展示了应用程序如何初始化，以及新电子邮件到达时发生的事情。
 
-![11_1](../resources/images/11_1.png)  
+![11_1](../resources/images/11_1.png)
+
 图 11-1 设计使用了事件的应用程序 
 
 图 11-1 的应用程序首先构造 `MailManager` 的一个实例。 `MailManager` 提供了 `NewMail` 事件。构造 `Fax` 和 `Pager` 对象时，它们向 `MailManager` 的 `NewMail` 事件登记自己的一个实例方法。这样当新邮件到达时， `MailManager` 就知道通知 `Fax` 和 `Pager` 对象。`MailManager` 将来收到新邮件时会引发 `NewMail` 事件，使自己登记的方法都有机会以自己的方式处理邮件。

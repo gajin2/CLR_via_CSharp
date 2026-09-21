@@ -88,7 +88,7 @@ CLR COM 服务器初始化时会创建一个 AppDomain。AppDomain 是一组程�
 
 图 22-1 演示了一个 Windows 进程，其中运行着一个 CLR COM 服务器。该 CLR 当前管理着两个 AppDomain(虽然在一个 Windows 进程中可以运行的 AppDomain 数量没有硬性限制)。每个 AppDomain 都有自己的 Loader 堆，每个 Loader 堆都记录了自 AppDomain 创建以来已访问过哪些类型。这些类型对象已在第 4 章讨论过，Loader 堆中的每个类型对象都有一个方法表，方法表中的每个记录项都指向 JIT 编译的本机代码(前面是方法至少执行过一次)。
 
-![22_1](../resources/images/22_1.png)  
+![22_1](../resources/images/22_1.png)
 
 图 22-1 寄宿了 CLR 和两个 AppDomain 的一个 Windows 进程  
 
@@ -326,7 +326,7 @@ AppDomain 创建后可被赋予一个**友好名称**。它是用于标识 AppDo
 
 有两个办法可证明调用线程已从默认 AppDomain 切换至新 AppDomain。首先，我在 AppDomain。首先，我在 `SomeMethod` 方法调用了 `Thread.GetDomain.CreateDomain` 方法，并传递「AD #2」作为友好名称参数来创建的。其次，在调试器中逐语句调试代码，并打开了「调用堆栈」窗口，那么「[外部代码]」行会标注一个线程在什么位置跨越 AppDomain 边界。请参见图 22-2 底部的「调用堆栈」窗口。
 
-![22_2](../resources/images/22_2.png)  
+![22_2](../resources/images/22_2.png)
 
 图 22-2 调试器的「调用堆栈」窗口显示了一次 AppDomain 切换
 
@@ -599,7 +599,7 @@ CLR 可以得体地(gracefully)或者粗鲁地(rudely)终止线程或 AppDomain�
 
 为了解决这些问题，宿主可利用线程中止功能。图 22-3 展示了旨在解决落跑(runway)线程问题的宿主应用程序的典型架构。其具体工作方式如下(编号和图的圆圈中的编号对应)：
 
-![22_3](../resources/images/22_3.png)  
+![22_3](../resources/images/22_3.png)
 
 图 22-3 宿主应用程序如何拿回它的线程
 

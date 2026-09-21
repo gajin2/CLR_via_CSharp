@@ -84,7 +84,9 @@ public sealed class SomeType {                             // 1
 ```
 
 编译这个类型，用 ILDasm.exe 查看元数据，将看到如图 6-1 所示的输出。  
-![6_1](../resources/images/6_1.png)  
+
+![6_1](../resources/images/6_1.png)
+
 图 6-1 用 ILDasm.exe 查看 SomeType 的元数据
 
 注意，源代码中定义的所有成员都造成编译器生成元数据。事实上，有的成员还造成编译器生成额外的成员和额外的元数据。例如，事件成员(17)造成编译器生成一个字段、两个方法和一些额外的元数据。目前不理解这些内容没有关系。但在学习后面几章时，希望你能回头看看这个例子，体会成员是如何定义的，它们对编译器生成的元数据有何影响。
@@ -207,7 +209,9 @@ public static class AStaticClass {
 ```
 
 将上述代码编译成库(DLL)程序集，用 ILDasm.exe 查看会得到如图 6-2 所示的结果。如你所见，使用关键字 `static` 定义类，将导致 C# 编译器将该类标记为 `abstract` 和 `sealed`。另外，编译器不在类型中生成实例构造器方法，你在图 6-2 中看不到实例构造器(.ctor)方法。  
-![6_2](../resources/images/6_2.png)  
+
+![6_2](../resources/images/6_2.png)
+
 图 6-2 ILDasm.exe 表明静态类在元数据中是抽象密封类
 
 ## <a name="6_5">6.5 分部类、结构和接口</a>
