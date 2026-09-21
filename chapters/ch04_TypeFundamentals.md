@@ -314,6 +314,7 @@ namespace CompanyName {
 
 >> 在文档中查找类型时，文档会明确指出类型所属的命名空间，以及实现了该类型的程序集。如图 4-1 所示，可以清楚地看到(在「语法」小节的上方)， `ResXFileRef` 类型是 `System.Resources` 命名空间的一部分，在 `System.Windows.Forms.dll` 程序集中实现。为了编译引用了 `ResXFileRef` 类型的代码，要在源代码中添加 `using System.Resources;` 指令，而且要使用 `/r:System.Windows.Forms.dll` 编译器开关。
 ![4_1](../resources/images/4_1.png)
+
 >> 图 4-1 文档显示了类型的命名空间和程序集信息
 
 ## <a name="4_4">4.4 运行时的相互关系</a>

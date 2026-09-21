@@ -1381,6 +1381,7 @@ public static class Contract {
 协定默认只作为文档使用，因为生成项目时没有定义 `CONTRACTS_FULL` 符号。为了发掘协定的附加价值，必须下载额外的工具和一个 Visual Studio 属性窗格，网址是 `http://msdn.microsoft.com/en-us/devlabs/dd491992.aspx`。Visual Studio之所以不包含所有代码协定工具，是因为该技术和增强的速度比 Visual Studio 本身快得多。下载和安装好额外的工具之后，会看到项目有一个新的属性窗格，如图 20-9 所示。
 
 ![20_9](../resources/images/20_9.png)
+
 图 20-9 一个 Visual Studio 项目的 Code Contracts 窗格
 
 启用代码协定功能要勾选 Perform Runtime Contract Checking，并从旁边的组合框中选择 Full。这样就会在生成项目时定义 `CONTRACTS_FULL` 符号，并在项目生成之后调用恰当的工具(稍后详述)。然后，运行时违反协定会引发`Contract`的`ContractFailed`事件。一般情况下，开发人员不向这个事件登记任何方法。但如果登记了方法，你登记的任何方法都会接收到一个 `ContractFailedEventArgs` 对象，它看起来像下面这样：

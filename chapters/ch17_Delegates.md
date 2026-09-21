@@ -301,6 +301,7 @@ private static void Counter(Int32 from, Int32 to, Feedback fb) {
 委托本身就很有用，再加上对委托链的支持，用处就更大了！委托链是委托对象的集合。可利用委托链调用集合中的委托所代表的全部方法。为了理解这一点，请参考 17.1 节的实例代码中的 `ChainDelegateDemo1` 方法。在 `Console.WriteLine` 语句之后，我构造了三个委托对象并让变量 `fb1`，`fb2` 和 `fb3` 分别引用每个对象，如图 17-3 所示。
 
 ![17_3](../resources/images/17_3.png)
+
 图 17-3 fb1，fb2 和 fb3 变量引用的委托对象的初始状态
 
 指向`Feedback`委托对象的引用变量`fbChain`旨在引用委托链(或者说委托对象集合)，这些对象包装了可回调的方法。`fbChain`初始化为`null`，表明目前没有要回调的方法。使用`Delegate`类的公共静态方法`Combine`将委托添加到链中：
@@ -310,6 +311,7 @@ private static void Counter(Int32 from, Int32 to, Feedback fb) {
 执行这行代码时，`Combine` 方法发现试图合并的是`null`和`fb1`。在内部，`Combine`直接返回`fb1`中的值，所以`fbChain`变量现在引用`fb1`变量所引用的委托对象，如图 17-4 所示。
 
 ![17_4](../resources/images/17_4.png)
+
 图 17-4 在委托链中插入第一个委托后委托对象的状态
 
 再次调用 `Combine` 方法在链中添加第二个委托：
@@ -319,6 +321,7 @@ private static void Counter(Int32 from, Int32 to, Feedback fb) {
 在内部，`Combine`方法发现`fbChain` 已引用了一个委托对象，所以 `Combine` 会构造一个新的委托对象。新委托对象对它的私有字段 `_target` 和 `_methodPtr` 进行初始化，具体的值对于目前的讨论来说并不重要。重要的是，`_invocationList`字段被初始化为引用一个委托对象数组。数组的第一个元素(索引0)被初始化引用包装了 `FeedbackToConsole` 方法的委托(也就是 `fbChain` 目前引用的委托)。数组的第二个元素(索引 1)被初始化为引用包装了`FeedbackToMsgBox`方法的委托(也就是 `fb2` 引用的委托)。最后，`fbChain`被设为引用新建的委托对象，如图 17-5 所示。
 
 ![17_5](../resources/images/17_5.png)
+
 图 17-5 在委托链中插入第二个委托之后委托对象的状态
 
 为了在链中添加第三个委托，我再次调用 `Combine` 方法。

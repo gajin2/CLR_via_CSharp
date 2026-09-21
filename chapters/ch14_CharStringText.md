@@ -414,6 +414,7 @@ public sealed class Program {
 生成并运行以上代码得到如图 14-1 所示的结果。
 
 ![14_1](../resources/images/14_1.png)
+
 图 14-1 字符串排序结果
 
 > 注意<sup>①</sup> 源代码不要用 ANSI 格式保存，否则日语字符会丢失。要在 Microsoft Visual Studio中保存这个文件，请打开「另存文件为」对话框，单击「保存」按钮右侧的下箭头，选择「编码保存」，并选择「Unicode(UTF-8带签名)-代码页 65001」。Microsoft C# 编译器用这个代码也就能成功解析源代码文件了。
@@ -568,12 +569,15 @@ public sealed class Program {
 编译并运行上述代码，会显示如图 14-2、图 14-3 和图 14-4 所示的对话框。
 
 ![14_2](../resources/images/14_2.png)
+
 图 14-2 `SubstringByTextElements`的结果
 
 ![14_3](../resources/images/14_3.png)
+
 图 14-3 `GetTextElementEnumerator`的结果
 
 ![14_4](../resources/images/14_4.png)
+
 图 14-4 `ParseCombiningCharacters`的结果
 
 ### 14.2.7 其他字符串操作
@@ -748,6 +752,7 @@ MessageBox.Show(s);
 生成并运行上述代码，会显示如图 14-5 所示的消息框。
 
 ![14_5](../resources/images/14_5.png)
+
 图 14-5 数值正确格式化以表示越南货币
 
 在内部，`Decimal`的`ToString`方法发现`formatProvider`实参不为`null`，所以会像下面这样调用对象的`GetFormat`方法：
