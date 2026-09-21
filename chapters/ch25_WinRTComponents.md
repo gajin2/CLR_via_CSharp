@@ -366,7 +366,7 @@ namespace Windows.Storage.Streams {
 }
 ```
 
-如你所见，`IBuffer` 对象定义了缓冲区的最大大小和实际长度。但奇怪的是，它没有提供实际在缓冲区中读写数据的方式。这主要是由于 WinRT 类型不能在其数据中表示指针，因为指针不能很好地映射到部分语言(比如 JavaScript 和 安全 C# 代码)。所以，`IBuffer` 对象实际只是在 CLR 和 WinRT API 之间传递内存地址对的一种方式。为了访问内存地址处的字节，需要使用一个名为 `IBufferByteAccess` 的内部 COM 接口。注意这是 COM 接口(因为返回指针)而不是 WinRT 接口。.NET Framework 团队为这个 COM 接口定义了一个内部 RCW，如下所示：
+如你所见，`IBuffer` 对象定义了缓冲区的最大大小和实际长度。但奇怪的是，它没有提供实际在缓冲区中读写数据的方式。这主要是由于 WinRT 类型不能在其数据中表示指针，因为指针不能很好地映射到部分语言(比如 JavaScript 和安全 C# 代码)。所以，`IBuffer` 对象实际只是在 CLR 和 WinRT API 之间传递内存地址对的一种方式。为了访问内存地址处的字节，需要使用一个名为 `IBufferByteAccess` 的内部 COM 接口。注意这是 COM 接口(因为返回指针)而不是 WinRT 接口。.NET Framework 团队为这个 COM 接口定义了一个内部 RCW，如下所示：
 
 ```C#
 namespace System.Runtime.InteropServices.WindowsRuntime {

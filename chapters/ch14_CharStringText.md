@@ -565,7 +565,7 @@ public sealed class Program {
 }
 ```
 
-编译并运行上述代码，会显示如图 14-2、图 14-3 和 图 14-4 所示的对话框。
+编译并运行上述代码，会显示如图 14-2、图 14-3 和图 14-4 所示的对话框。
 
 ![14_2](../resources/images/14_2.png)
 图 14-2 `SubstringByTextElements`的结果
@@ -1266,7 +1266,7 @@ H0ofycQ1tOwzFw==
 
 `SecureString`类实现了`IDisposable`接口，允许以简单的方式确定性地摧毁字符串的安全内容。应用程序不再需要敏感的字符串内容时，只需调用`SecureString`的`Dispose`方法。在内部，`Dispose` 会对内存缓冲区的内容进行清零，确保恶意代码无法获得敏感信息，然后释放缓冲区。`SecureString`对象内部的一个字段引用了一个从`SafeBuffer`派生的对象，它负责维护实际的字符串。由于 `SafeBuffer` 类最终从`CriticalFinalizerObject`类派生<sup>②</sup>，所以字符串在垃圾回收时，它的字符内容保证会被清零，而且缓冲区会得到释放。和`String`对象不同，`SecureString`对象在被回收之后，加密字符串的内容将不再存在于内存中。
 
-> ② 第 21 章「自动内存管理(垃圾回收)」将讨论该抽象基类。
+> ② 第 21 章「托管堆和垃圾回收」将讨论该抽象基类。
 
 知道了如何创建和修改`SecureString`对象之后，接着讨论如何使用它。遗憾的是，最新的 FCL 限制了对 `SecureString` 类的支持。也就是说，只有少数方法才能接受 `SecureString` 参数。在 .NET Framework 4中，以下情况允许将 `SecureString` 作为密码传递。
 

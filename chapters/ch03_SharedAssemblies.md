@@ -347,7 +347,7 @@ public sealed class Program {
 * **不同文件，不同程序集**
   如果引用的类型在其他程序集的文件中，「运行时」会加载被引用程序集的清单文件。如果需要的类型不在该文件中，就继续加载包含了类型的文件。发现类型的成员，执行继续。
 
-> 注意 ModuleDef，ModuleRef 和 FileDef 元数据表在引用文件时使用了文件名和扩展名。但 AssemblyRef 元数据表只使用文件名，无扩展名。和程序集绑定时，系统通过探测目录来尝试定位文件，自动附加 .dll 和 exe 扩展名，详见 2.8 节「简单管理控制(配置)」。
+> 注意 ModuleDef，ModuleRef 和 FileDef 元数据表在引用文件时使用了文件名和扩展名。但 AssemblyRef 元数据表只使用文件名，无扩展名。和程序集绑定时，系统通过探测目录来尝试定位文件，自动附加 .dll 和 .exe 扩展名，详见 2.8 节「简单管理控制(配置)」。
 
 解析类型引用时有任何错误(找不到文件、文件无法加载、哈希值不匹配等)都会抛出相应异常。
 > 注意 可以向`System.AppDomain` 的 `AssemblyResolve`，`ReflectionOnlyAssemblyResolve`和`TypeResolve` 事件注册回调方法。在回调方法中执行解决绑定问题的代码，使应用程序不抛出异常而继续运行。

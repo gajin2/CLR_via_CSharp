@@ -832,7 +832,7 @@ internal sealed class PrimaryConstraintOfStream<T> where T : class {
 
 `struct`约束向编译器承诺类型参数是值类型。包括枚举在内的任何值类型都满足这个约束。但编译器和CLR将任何`System.Nullable<T>`值类型视为特殊类型，不满足这个`struct`约束。
 
-原因是 `Nullable<T>`类型将它的类型参数约束为`struct`，而 CLR 希望禁止像`Nullable<Nullable<T>>`这样的递归类型。可空类型将在第19章「可空值类型」讨论。
+原因是 `Nullable<T>`类型将它的类型参数约束为`struct`，而 CLR 希望禁止像`Nullable<Nullable<T>>`这样的递归类型。可空类型将在第 19 章「可空值类型」讨论。
 
 以下示例类使用 `struct` 约束来约束它的类型参数：
 

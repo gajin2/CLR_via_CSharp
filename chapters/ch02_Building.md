@@ -144,7 +144,7 @@ C# 编译器支持多个响应文件。除了在命令行上显式指定的文�
 
 ## <a name="2_3">2.3 元数据概述</a>
 
-现在，我们知道了创建的是什么类型的 PE 文件。但是， Program.exe 文件中到底有什么？托管 PE 文件由 4 部分构成：PE32(+)头、CLR头、元数据以及 IL。PE32(+)头是 Windows 要求的标准信息。CLR 头是一个小的信息块，是需要 CLR 的模块(托管模块)特有的。这个头包含模块生成时所面向的 CLR 的 major(主)和 minor(次)版本号；一些标志(flag)；一个 **MethodDef** token(稍后详述)，该 token 指定了模块的入口方法(前提是该模块是CUI、GUI 或 Windows Store 执行体)；一个可选的强名称数字签名(将在第3章讨论)。最后，CLR 头还包含模块内部的一些元数据表的大小和偏移量。可以查看 `CorHdr.h` 头文件定义的 `IMAGE_COR20_HEADER` 来了解 CLR 头的具体格式。
+现在，我们知道了创建的是什么类型的 PE 文件。但是， Program.exe 文件中到底有什么？托管 PE 文件由 4 部分构成：PE32(+)头、CLR头、元数据以及 IL。PE32(+)头是 Windows 要求的标准信息。CLR 头是一个小的信息块，是需要 CLR 的模块(托管模块)特有的。这个头包含模块生成时所面向的 CLR 的 major(主)和 minor(次)版本号；一些标志(flag)；一个 **MethodDef** token(稍后详述)，该 token 指定了模块的入口方法(前提是该模块是CUI、GUI 或 Windows Store 执行体)；一个可选的强名称数字签名(将在第 3 章讨论)。最后，CLR 头还包含模块内部的一些元数据表的大小和偏移量。可以查看 `CorHdr.h` 头文件定义的 `IMAGE_COR20_HEADER` 来了解 CLR 头的具体格式。
 
 元数据是有几个表构成的二级制数据块。有三种表，分别是定义表(definition table)、引用表(reference table)和清单表(manifest table)。表 2-1 总结了模块元数据块中常用的定义表。  
 
@@ -671,7 +671,7 @@ using System.Reflection;
 |FILEFLAGSMASK|(无)|总是设为 `VS_FFI_FILEFLAGSMASK`(在 WinVer.h 中定义为 `0x0000003F`)|
 |FILEFLAGS|(无)|总是0|
 |FILEOS|(无)|目前总是 `VOS__WINDOWS32`|
-|FILETYPE|`/target`|如果指定了`/target:exe` 或 `/target:winexe`，就设为`VFT_APP;`如果制定了`/target:library`，就设为`VFT_DLL`|
+|FILETYPE|`/target`|如果指定了`/target:exe` 或 `/target:winexe`，就设为`VFT_APP`；如果指定了`/target:library`，就设为`VFT_DLL`|
 |FILESUBTYPE|(无)|总是设为 `VFT2_UNKNOWN`(该字段对于`VFT_APP`和 `VFT_DLL`)|
 |AssemblyVersion|`/version`|`System.Reflection.AssemblyVersionAttribute`|
 |Comments|`/description`|`System.Reflection.AssemblyDescriptionAttribute`|
